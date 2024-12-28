@@ -1,0 +1,45 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "cyber-interigence",
+          "appId": "1:361873588404:android:b5ffbd3ce6244f146517e1",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "cyber-interigence",
+          "appId": "1:361873588404:ios:25633b8f0892bec96517e1",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "cyber-interigence",
+          "configurations": {
+            "android": "1:361873588404:android:b5ffbd3ce6244f146517e1",
+            "ios": "1:361873588404:ios:25633b8f0892bec96517e1",
+            "web": "1:361873588404:web:7b72e7c397a8b6b46517e1"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
