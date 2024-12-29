@@ -12,8 +12,8 @@
 migrate_working_dir/
 doc_information
 lib/firebase_options.dart
-android/app
-ios/Runner
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
 
 # IntelliJ related
 *.iml
