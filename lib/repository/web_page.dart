@@ -1,6 +1,7 @@
 import 'package:cyber_interigence/util/logo_provider.dart';
 import 'package:cyber_interigence/util/url_provider.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,8 +61,11 @@ class _WebPageState extends ConsumerState<WebPage> {
             "On HTTP Error: ${error.response?.statusCode} ", null);
       },
       onWebResourceError: (WebResourceError error) {
-        setDividedContainer(
-            "On Web Resource Error: ${error.toString()} ", null);
+        // Androidバージョン作成：ブラウザで頻繁に出るので無視
+        if (defaultTargetPlatform == TargetPlatform.iOS) {
+          setDividedContainer(
+              "On Web Resource Error: ${error.toString()} ", null);
+        }
       },
     ));
   }
@@ -116,6 +120,7 @@ class _WebPageState extends ConsumerState<WebPage> {
     // テキスト指定の場合
     if (msg.isNotEmpty) {
       dividerContainer = Container(
+        alignment: Alignment.centerLeft,
         decoration: const BoxDecoration(
           color: Colors.black,
         ),
@@ -123,8 +128,9 @@ class _WebPageState extends ConsumerState<WebPage> {
         margin: const EdgeInsets.all(4.0),
         child: Text(
           msg,
+          // Android版作成：フォントサイズを16->10へ
           style: const TextStyle(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+              color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
         ),
       );
     } else if (argDisplayContainer != null) {

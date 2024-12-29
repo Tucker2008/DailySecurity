@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- ラベル名変更 android:label -->
     <application
-        android:label="cyber_interigence"
+
+        android:label="daily_security"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

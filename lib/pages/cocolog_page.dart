@@ -6,6 +6,7 @@ import 'package:cyber_interigence/repository/rss_stream.dart';
 import 'package:cyber_interigence/util/logo_provider.dart';
 import 'package:cyber_interigence/util/url_provider.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cyber_interigence/constant/feed_constant.dart';
 import 'package:cyber_interigence/constant/url_constant.dart';
@@ -154,24 +155,26 @@ class CocologPage extends ConsumerWidget {
                   ),
                 ),
               ),
-              // 隠しボタン
-              // GestureDetector(
-              //   onTap: () {
-              //     PreferenceManager().debugPrintState();
-              //   },
-              //   child: ListTile(
-              //     leading: Icon(
-              //       Icons.dashboard_customize,
-              //       color: Theme.of(context).colorScheme.primary,
-              //     ),
-              //     title: Text(
-              //       "サポート",
-              //       style: TextStyle(
-              //           fontSize: fontSize.body2,
-              //           color: Theme.of(context).colorScheme.tertiary),
-              //     ),
-              //   ),
-              // ),
+              // 隠しボタン（デバッグ用）
+              (kReleaseMode == false)
+                  ? GestureDetector(
+                      onTap: () {
+                        PreferenceManager().debugPrintState();
+                      },
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.dashboard_customize,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        title: Text(
+                          "サポート",
+                          style: TextStyle(
+                              fontSize: fontSize.body2,
+                              color: Theme.of(context).colorScheme.tertiary),
+                        ),
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         ),

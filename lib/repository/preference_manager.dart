@@ -1,6 +1,6 @@
 import 'package:cyber_interigence/model/preference.dart';
 import 'package:cyber_interigence/repository/pref_store.dart';
-// import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 
 class PreferenceManager extends PrefStore {
   // Singletonデザインパターン
@@ -36,9 +36,11 @@ class PreferenceManager extends PrefStore {
   }
 
   // デバッグオプション
-  // void debugPrintState() {
-  //   debugPrint("preference = ${_preference.toJson().toString()}");
-  // }
+  void debugPrintState() {
+    (kReleaseMode == false)
+        ? debugPrint("preference = ${_preference.toJson().toString()}")
+        : ();
+  }
 
   // 前回のログイン時間を保持する
   DateTime _referenceDate = DateTime.now();
