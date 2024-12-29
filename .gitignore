@@ -8,9 +8,11 @@
 .buildlog/
 .history
 .svn/
+.firebase/
 migrate_working_dir/
 doc_information
 lib/firebase_options.dart
+android/app/src/google-service.json
 
 # IntelliJ related
 *.iml
