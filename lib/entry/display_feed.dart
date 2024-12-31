@@ -1,16 +1,14 @@
-// import 'package:cyber_interigence/constant/feed_constant.dart';
 import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:cyber_interigence/repository/cache_manager.dart';
+import 'package:cyber_interigence/repository/launch_url.dart';
 import 'package:cyber_interigence/repository/rss_stream.dart';
 import 'package:flutter/material.dart';
-import 'package:cyber_interigence/content/cocolog_content.dart';
 import 'package:cyber_interigence/util/note_provider.dart';
 import 'package:cyber_interigence/util/post_category.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:cyber_interigence/util/url_provider.dart';
-import 'package:cyber_interigence/repository/web_page.dart';
 
 // セキュリティ記事の一覧:XMLをページに仕立てる
 // RSSも時々時間がかかってsplashScreen()が出る
@@ -26,35 +24,6 @@ class DisplayFeed {
   // RSSのリストの上のに表示するコンテンツを指定する
   //
   Widget firstContainer = Container();
-
-  //
-  // 別ページで当該記事を表示する
-  // Cocologサイト以外はブラウザ表示（統合のため）
-  // Cocologサイトは独自解析エンジン付き表示を呼ぶ
-  //
-  void _launchURL(BuildContext context, String url) {
-    // タイトル行をクリックしても反応しない様にここでガード
-    if (url.isNotEmpty) {
-      if (Uri.parse(url).host == cocologHost) {
-        urlProvider.setUrl(url);
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const CocologContent(),
-          ),
-        );
-      } else {
-        // Cocologコンテンツでなければそのまま表示する
-        // URLをセットして
-        urlProvider.setUrl(url);
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const WebPage(),
-          ),
-        );
-      }
-    }
-  }
-
   //
   // IPA等の他サイトのFeed表示
   // Cocolog記事表示
@@ -138,7 +107,7 @@ class DisplayFeed {
                     height: 1.2,
                   ),
                   onTap: () =>
-                      {_launchURL(context, informationList[index].link!)},
+                      {launchURL(context, informationList[index].link!)},
                   textColor: Theme.of(context).colorScheme.onSurface,
                   // カテゴリ毎のアイコン
                   // "N/A"は設定がない意味なので、アイコンも出さない
@@ -180,7 +149,7 @@ class DisplayFeed {
       if (item.title == title) {
         // デバッグ
         // debugPrint("findLaunchPage: find ${item.title}");
-        _launchURL(context, item.link!);
+        launchURL(context, item.link!);
         return true;
       }
     }

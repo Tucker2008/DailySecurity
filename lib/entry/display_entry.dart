@@ -1,9 +1,8 @@
 import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/methods/splash_screen.dart';
-import 'package:cyber_interigence/repository/web_page.dart';
+import 'package:cyber_interigence/repository/launch_url.dart';
 import 'package:cyber_interigence/util/post_category.dart';
 import 'package:cyber_interigence/model/post_structure.dart';
-import 'package:cyber_interigence/util/url_provider.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -198,15 +197,8 @@ class DisplayEntry {
           onTap: () {
             // 区切りコンテナは線にする（いちいち説明しない）
             WidgetProvider().removeWidget();
-            // 表示する先のURL
-            UrlProvider()
-                .setUrl(postStructure!.contentLinks[itemCount].toString());
-            // WEBページ表示
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const WebPage(),
-              ),
-            );
+            launchURL(
+                context, postStructure!.contentLinks[itemCount].toString());
           },
           child: Container(
             // リンク領域の背景色（secondaryContainer）
