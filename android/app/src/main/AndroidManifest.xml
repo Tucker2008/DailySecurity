@@ -44,4 +44,6 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+    <!-- Google Play Storeに登録する際に不備として指摘されてしまう -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 </manifest>
