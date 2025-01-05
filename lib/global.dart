@@ -25,7 +25,7 @@ const int inactiveHours = 3;
 // デバッグモードの選択（日々の開発ステップごとに設定）
 // bool debugStructure = false; // 構造変更などのデバッグモード
 // bool debugRssFeed = false; // RSSリーダ機能のデバッグ
-// bool debugPreference = false; // ユーザ設定のデバッグ
+bool debugPreference = true; // ユーザ設定のデバッグ
 // bool debugEntryDetails = false; // cocologエントリの中身のデバッグ
 // bool debugEntry = false; // cocologエントリのデバッグ
 // bool debugOnboard = false; // 起動１回目の画面デバッグ用

@@ -3,6 +3,7 @@ import 'package:cyber_interigence/entry/display_feed.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/pages/cocolog_page.dart';
 import 'package:cyber_interigence/pages/news_main_page.dart';
+import 'package:cyber_interigence/pages/setting_screen.dart';
 import 'package:cyber_interigence/repository/cache_manager.dart';
 import 'package:cyber_interigence/util/message_provider.dart';
 import 'package:cyber_interigence/util/timer_provider.dart';
@@ -86,6 +87,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
   static final _screens = [
     CocologPage(),
     const NewsMainPage(),
+    const SettingScreen(),
   ];
 
   // 選択されたスクリーン番号
@@ -144,6 +146,14 @@ class _MainScreenState extends ConsumerState<MainScreen>
               ),
               label: mainMenuNews,
               tooltip: newsFeedTitle,
+            ),
+            NavigationDestination(
+              icon: Icon(
+                Icons.settings,
+                // color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              label: mainMenuSetting,
+              tooltip: newsSettingTitle,
             ),
           ],
         ),

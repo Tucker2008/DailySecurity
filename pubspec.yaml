@@ -40,6 +40,7 @@ dependencies:
   flutter_cached_pdfview:
   webview_flutter:
   synchronized:
+  package_info_plus: 
 
   # 特記事項
   # 

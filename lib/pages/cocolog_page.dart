@@ -1,12 +1,9 @@
 import 'package:cyber_interigence/entry/display_feed.dart';
-import 'package:cyber_interigence/repository/web_page.dart';
 import 'package:cyber_interigence/util/color_provider.dart';
 import 'package:cyber_interigence/repository/preference_manager.dart';
 import 'package:cyber_interigence/repository/rss_stream.dart';
 import 'package:cyber_interigence/util/logo_provider.dart';
-import 'package:cyber_interigence/util/url_provider.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cyber_interigence/constant/feed_constant.dart';
 import 'package:cyber_interigence/constant/url_constant.dart';
@@ -60,123 +57,6 @@ class CocologPage extends ConsumerWidget {
         child: AppBar(
           title: LogoProvider().getServiceLogo(),
           centerTitle: true,
-        ),
-      ),
-      // Drawer ----------------
-
-      drawer: SizedBox(
-        width: 280, // iphoneでは狭すぎるのか？ 元256
-        child: Drawer(
-          child: ListView(
-            children: [
-              SizedBox(
-                height: 140,
-                child: DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceDim,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "利用規約   及び\nプライバシーポリシー",
-                        style: TextStyle(
-                          fontSize: fontSize.body2,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // 利用規約の表示
-              GestureDetector(
-                onTap: () {
-                  WidgetProvider().removeWidget();
-                  UrlProvider().setUrl(termofusePage);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const WebPage(),
-                    ),
-                  );
-                },
-                child: ListTile(
-                  leading: Icon(
-                    Icons.assignment_outlined,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  title: Text(
-                    "利用規約",
-                    style: TextStyle(
-                        fontSize: fontSize.body2,
-                        color: Theme.of(context).colorScheme.tertiary),
-                  ),
-                ),
-              ),
-              // プライバシーポリシー表示
-              GestureDetector(
-                onTap: () {
-                  WidgetProvider().removeWidget();
-                  UrlProvider().setUrl(privercyPage);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const WebPage(),
-                    ),
-                  );
-                },
-                child: ListTile(
-                  leading: Icon(
-                    Icons.assignment_late_outlined,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  title: Text(
-                    "プライバシーポリシー",
-                    style: TextStyle(
-                        fontSize: fontSize.body2,
-                        color: Theme.of(context).colorScheme.tertiary),
-                  ),
-                ),
-              ),
-              // Drawerを閉じる
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: ListTile(
-                  leading: Icon(
-                    Icons.close_outlined,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  title: Text(
-                    "閉じる",
-                    style: TextStyle(
-                        fontSize: fontSize.body2,
-                        color: Theme.of(context).colorScheme.tertiary),
-                  ),
-                ),
-              ),
-              // 隠しボタン（デバッグ用）
-              (kReleaseMode == false)
-                  ? GestureDetector(
-                      onTap: () {
-                        PreferenceManager().debugPrintState();
-                      },
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.dashboard_customize,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        title: Text(
-                          "サポート",
-                          style: TextStyle(
-                              fontSize: fontSize.body2,
-                              color: Theme.of(context).colorScheme.tertiary),
-                        ),
-                      ),
-                    )
-                  : Container(),
-            ],
-          ),
         ),
       ),
 
