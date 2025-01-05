@@ -64,131 +64,138 @@ class OnBoardingPageState extends State<OnBoardingPage> {
       imageFlex: 3,
     );
 
-    return IntroductionScreen(
-      key: introKey,
-      globalBackgroundColor: Theme.of(context).colorScheme.surfaceDim, //色調整必要
-      allowImplicitScrolling: true,
-      // 自動で進むときのページ毎の時間
-      // 注意：コメントアウトすると例外発生
-      autoScrollDuration: 10000,
-      // 自動で繰り返しイントロを表示するか？
-      infiniteAutoScroll: false,
+    // IntroductionScreen
+    // これをSafeAreaで囲わないと表示エリアが（特に下が）オーバーする
+    // iOSは大丈夫そうだがAndroidがダメ
+    return SafeArea(
+      child: IntroductionScreen(
+        key: introKey,
+        globalBackgroundColor: Theme.of(context).colorScheme.surfaceDim, //色調整必要
+        allowImplicitScrolling: true,
+        // 自動で進むときのページ毎の時間
+        // 注意：コメントアウトすると例外発生
+        autoScrollDuration: 10000,
+        // 自動で繰り返しイントロを表示するか？
+        infiniteAutoScroll: false,
 
-      // 各ページのコンテンツ内容
-      pages: [
-        // １ページ目
-        PageViewModel(
-          titleWidget: Container(
-            padding: const EdgeInsets.only(left: 16.0),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              title1st,
-              style: TextStyle(
-                fontSize: fontSize.headlineH5,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+        // 各ページのコンテンツ内容
+        pages: [
+          // １ページ目
+          PageViewModel(
+            titleWidget: Container(
+              padding: const EdgeInsets.only(left: 16.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                title1st,
+                style: TextStyle(
+                  fontSize: fontSize.headlineH5,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
-          ),
-          bodyWidget: Container(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              body1st,
-              style: bodyStyle,
-            ),
-          ),
-          image: _buildImage(image1st),
-          decoration: pageDecoration,
-        ),
-        PageViewModel(
-          titleWidget: Container(
-            padding: const EdgeInsets.only(left: 16.0),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              title2nd,
-              style: TextStyle(
-                fontSize: fontSize.headlineH5,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+            bodyWidget: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                body1st,
+                style: bodyStyle,
               ),
             ),
+            image: _buildImage(image1st),
+            decoration: pageDecoration,
           ),
-          bodyWidget: Container(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              body2nd,
-              style: bodyStyle,
-            ),
-          ),
-          image: _buildImage(image2nd),
-          decoration: pageDecoration,
-        ),
-        PageViewModel(
-          titleWidget: Container(
-            padding: const EdgeInsets.only(left: 16.0),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              title3rd,
-              style: TextStyle(
-                fontSize: fontSize.headlineH5,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+          PageViewModel(
+            titleWidget: Container(
+              padding: const EdgeInsets.only(left: 16.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                title2nd,
+                style: TextStyle(
+                  fontSize: fontSize.headlineH5,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
-          ),
-          bodyWidget: Container(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              body3rd,
-              style: bodyStyle,
+            bodyWidget: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                body2nd,
+                style: bodyStyle,
+              ),
             ),
+            image: _buildImage(image2nd),
+            decoration: pageDecoration,
           ),
-          image: _buildImage(image3rd),
-          decoration: pageDecoration,
+          PageViewModel(
+            titleWidget: Container(
+              padding: const EdgeInsets.only(left: 16.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                title3rd,
+                style: TextStyle(
+                  fontSize: fontSize.headlineH5,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            bodyWidget: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                body3rd,
+                style: bodyStyle,
+              ),
+            ),
+            image: _buildImage(image3rd),
+            decoration: pageDecoration,
+          ),
+        ],
+        onDone: () => _onIntroEnd(context),
+        onSkip: () => _onIntroEnd(context), // You can override onSkip callback
+        // showSkipButton と showBackButton は２択（両方trueは例外発生）
+        showSkipButton: false,
+        skipOrBackFlex: 0,
+        nextFlex: 0,
+        showBackButton: true,
+        //rtl: true, // Display as right-to-left
+        back: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onTertiaryFixed,
         ),
-      ],
-      onDone: () => _onIntroEnd(context),
-      onSkip: () => _onIntroEnd(context), // You can override onSkip callback
-      // showSkipButton と showBackButton は２択（両方trueは例外発生）
-      showSkipButton: false,
-      skipOrBackFlex: 0,
-      nextFlex: 0,
-      showBackButton: true,
-      //rtl: true, // Display as right-to-left
-      back: Icon(
-        Icons.arrow_back,
-        color: Theme.of(context).colorScheme.onTertiaryFixed,
-      ),
-      skip: Text(skipTxt,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onTertiaryFixed,
-          )),
-      next: Icon(
-        Icons.arrow_forward,
-        color: Theme.of(context).colorScheme.onTertiaryFixed,
-      ),
-      done: Text(completeTxt,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onTertiaryFixed,
-          )),
-      curve: Curves.fastLinearToSlowEaseIn,
-      controlsMargin: const EdgeInsets.all(16),
-      controlsPadding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
-      dotsDecorator: DotsDecorator(
-        size: const Size(10.0, 10.0),
-        color:
-            Theme.of(context).colorScheme.onTertiaryFixed, //Color(0xFFBDBDBD),
-        activeSize: const Size(22.0, 10.0),
-        activeShape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+        skip: Text(skipTxt,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onTertiaryFixed,
+            )),
+        next: Icon(
+          Icons.arrow_forward,
+          color: Theme.of(context).colorScheme.onTertiaryFixed,
         ),
-      ),
-      dotsContainerDecorator: ShapeDecoration(
-        color: Theme.of(context).colorScheme.tertiaryFixedDim, //Colors.black87,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        done: Text(completeTxt,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onTertiaryFixed,
+            )),
+        curve: Curves.fastLinearToSlowEaseIn,
+        controlsMargin: const EdgeInsets.all(16),
+        controlsPadding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
+        dotsDecorator: DotsDecorator(
+          size: const Size(10.0, 10.0),
+          color: Theme.of(context)
+              .colorScheme
+              .onTertiaryFixed, //Color(0xFFBDBDBD),
+          activeSize: const Size(22.0, 10.0),
+          activeShape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(25.0)),
+          ),
+        ),
+        dotsContainerDecorator: ShapeDecoration(
+          color:
+              Theme.of(context).colorScheme.tertiaryFixedDim, //Colors.black87,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          ),
         ),
       ),
     );

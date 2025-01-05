@@ -1,8 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- ラベル名変更 android:label -->
+    <!-- ラベル名変更 android:label これがそのままインストールアプリになる-->
     <application
-
-        android:label="daily_security"
+        android:label="Daily Security"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
