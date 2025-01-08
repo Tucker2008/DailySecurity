@@ -1,4 +1,4 @@
-import 'package:cyber_interigence/util/logo_provider.dart';
+import 'package:cyber_interigence/theme/appbar_constant.dart';
 import 'package:cyber_interigence/util/url_provider.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
 import 'package:flutter/material.dart';
@@ -46,14 +46,7 @@ class _PdfPageState extends ConsumerState<PdfPage> {
     }
 
     return Scaffold(
-      appBar: PreferredSize(
-        // AppBarの大きさ指定
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          centerTitle: true,
-          title: LogoProvider().getServiceLogo(),
-        ),
-      ),
+      appBar: AppbarConstant().getAppbarConstant(),
       // body WebPage
       body: SafeArea(
         child: Column(

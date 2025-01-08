@@ -1,8 +1,8 @@
 import 'package:cyber_interigence/entry/display_feed.dart';
+import 'package:cyber_interigence/theme/appbar_constant.dart';
 import 'package:cyber_interigence/util/color_provider.dart';
 import 'package:cyber_interigence/repository/preference_manager.dart';
 import 'package:cyber_interigence/repository/rss_stream.dart';
-import 'package:cyber_interigence/util/logo_provider.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cyber_interigence/constant/feed_constant.dart';
@@ -51,14 +51,7 @@ class CocologPage extends ConsumerWidget {
 
     return Scaffold(
       // AppBar ロゴを表示するだけ ----------------
-      appBar: PreferredSize(
-        // AppBarの大きさ指定
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          title: LogoProvider().getServiceLogo(),
-          centerTitle: true,
-        ),
-      ),
+      appBar: AppbarConstant().getAppbarConstant(),
 
       // コンテンツ内容一覧 ----------------
       body: DisplayFeed(

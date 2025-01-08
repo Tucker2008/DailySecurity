@@ -1,7 +1,7 @@
 import 'package:cyber_interigence/repository/initial_preference.dart';
 import 'package:cyber_interigence/repository/preference_manager.dart';
 import 'package:cyber_interigence/repository/push_notification_service.dart';
-import 'package:cyber_interigence/util/logo_provider.dart';
+import 'package:cyber_interigence/theme/appbar_constant.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,14 +34,7 @@ class NotificationProfile extends ConsumerWidget {
     final switchNotifier = ref.read(profSwitchProvider.notifier);
 
     return Scaffold(
-      appBar: PreferredSize(
-        // AppBarの大きさ指定
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          centerTitle: true,
-          title: LogoProvider().getServiceLogo(),
-        ),
-      ),
+      appBar: AppbarConstant().getAppbarConstant(),
 
       // 本体設定画面
       body: Container(

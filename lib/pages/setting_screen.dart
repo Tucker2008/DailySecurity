@@ -3,7 +3,7 @@ import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/pages/notification_profile.dart';
 import 'package:cyber_interigence/repository/launch_url.dart';
-import 'package:cyber_interigence/util/logo_provider.dart';
+import 'package:cyber_interigence/theme/appbar_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -22,14 +22,7 @@ class SettingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       // AppBar ロゴを表示するだけ ----------------
-      appBar: PreferredSize(
-        // AppBarの大きさ指定
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          title: LogoProvider().getServiceLogo(),
-          centerTitle: true,
-        ),
-      ),
+      appBar: AppbarConstant().getAppbarConstant(),
 
       // その他情報など表示
       body: Column(

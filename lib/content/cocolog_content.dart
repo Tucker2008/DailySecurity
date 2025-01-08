@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:cyber_interigence/util/logo_provider.dart';
+import 'package:cyber_interigence/theme/appbar_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cyber_interigence/entry/display_entry.dart';
@@ -51,16 +51,7 @@ class _CocologContentState extends ConsumerState<CocologContent>
     }
 
     return Scaffold(
-      appBar: PreferredSize(
-          // AppBarの大きさ指定
-          preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: AppBar(
-            // backgroundColor: Theme.of(context).colorScheme.primary,
-            // foregroundColor: Theme.of(context).colorScheme.primary,
-            // サービスロゴ表示
-            title: LogoProvider().getServiceLogo(),
-            centerTitle: true,
-          )),
+      appBar: AppbarConstant().getAppbarConstant(),
       body: DisplayEntry(postStructure: postStructure).displayEntry(context),
     );
   }
