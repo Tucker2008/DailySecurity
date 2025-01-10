@@ -3,7 +3,6 @@ import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/pages/notification_profile.dart';
 import 'package:cyber_interigence/repository/launch_url.dart';
-import 'package:cyber_interigence/theme/appbar_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -21,8 +20,7 @@ class SettingScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      // AppBar ロゴを表示するだけ ----------------
-      appBar: AppbarConstant().getAppbarConstant(),
+      // AppBar は main_screenにて対応済みのためここでは出さない -----------
 
       // その他情報など表示
       body: Column(

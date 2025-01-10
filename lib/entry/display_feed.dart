@@ -28,7 +28,7 @@ class DisplayFeed {
   // IPA等の他サイトのFeed表示
   // Cocolog記事表示
   //
-  Widget displayFeed(BuildContext context) {
+  Widget displayFeed(BuildContext context, String argCategory) {
     List<RssInformation> informationList = informationListArg!;
     // まだデータができていない場合にはsplashを出して終える
     if (informationList.isEmpty) {
@@ -110,13 +110,18 @@ class DisplayFeed {
                       {launchURL(context, informationList[index].link!)},
                   textColor: Theme.of(context).colorScheme.onSurface,
                   // カテゴリ毎のアイコン
-                  // "N/A"は設定がない意味なので、アイコンも出さない
+                  // カテゴリ指定がない場合だけにアイコンを表示する
                   leading: (informationList[index].category!.isNotEmpty &&
-                          informationList[index].category! != "N/A")
-                      ? Icon(
-                          postCategoryIcon(informationList[index].category!),
-                          size: 24,
-                        )
+                          informationList[index].category! != "N/A" &&
+                          argCategory.isEmpty)
+                      ? ( iconAvalable(informationList[index].category!)
+                          ? Icon(
+                              postCategoryIcon(
+                                  informationList[index].category!),
+                              size: 24,
+                            )
+                          : ImageIcon(postCategotyImageicon(
+                              informationList[index].category!)))
                       : null,
                   // 記事右のリンクアイコン
                   trailing: informationList[index].link!.isNotEmpty

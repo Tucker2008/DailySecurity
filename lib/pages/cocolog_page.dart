@@ -1,7 +1,7 @@
 import 'package:cyber_interigence/entry/display_feed.dart';
+import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
 import 'package:cyber_interigence/util/color_provider.dart';
-import 'package:cyber_interigence/repository/preference_manager.dart';
 import 'package:cyber_interigence/repository/rss_stream.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,9 @@ import 'package:cyber_interigence/global.dart';
 // ココログのRSS記事一覧画面
 //
 class CocologPage extends ConsumerWidget {
-  CocologPage({super.key});
+  CocologPage({super.key, required this.argCategory});
+
+  final String argCategory;
 
   // Providerの定義（RSS読み込み関数をまるごとProvider定義）
   final cocologProvider = FutureProvider.autoDispose
@@ -40,14 +42,16 @@ class CocologPage extends ConsumerWidget {
         ref.watch(cocologProvider(cocologRss));
     activity.when(
       data: (data) {
-        informationList = data;
+        // カテゴリ指定されていた場合にはフィルタする
+        if (argCategory.isNotEmpty) {
+          informationList = filteringList(data, argCategory, minFeedCount)!;
+        } else {
+          informationList = data;
+        }
       },
       error: (error, stacktrace) => noteProvider.setNote(error.toString()),
-      loading: () => (),
+      loading: () => splashScreenNoContext(),
     );
-
-    // これが表示されたという事は最初のログインとする
-    PreferenceManager().updateLastLogin();
 
     return Scaffold(
       // AppBar ロゴを表示するだけ ----------------
@@ -56,15 +60,17 @@ class CocologPage extends ConsumerWidget {
       // コンテンツ内容一覧 ----------------
       body: DisplayFeed(
               informationListArg: informationList,
-              firstContainer: cocologFirstContainer)
-          .displayFeed(context),
+              firstContainer: (argCategory == "news"
+                  ? cocologNewsContainer
+                  : cocologColumnContainer))
+          .displayFeed(context, argCategory),
     );
   }
 
   //
   // インシデントに学ぶセキュリティアクション（説明Container）
   //
-  final Widget cocologFirstContainer = Container(
+  final Widget cocologColumnContainer = Container(
     decoration: BoxDecoration(
       color: boxdecorationColor,
       border: Border(
@@ -90,6 +96,44 @@ class CocologPage extends ConsumerWidget {
         ),
         Text(
           cocologTitle2,
+          style: TextStyle(
+              // color: frontColor,
+              fontSize: fontSize.subTitle1,
+              fontWeight: FontWeight.w700),
+        ),
+      ],
+    ),
+  );
+
+  //
+  // インシデントに学ぶセキュリティアクション（説明Container）
+  //
+  final Widget cocologNewsContainer = Container(
+    decoration: BoxDecoration(
+      color: boxdecorationColor,
+      border: Border(
+        bottom: BorderSide(color: borderColor),
+        top: BorderSide(color: borderColor),
+      ),
+    ),
+    width: double.infinity,
+    padding:
+        const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 8.0),
+    margin: const EdgeInsets.all(4.0),
+    child: Column(
+      // 中央揃え
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          cocologNews1,
+          style: TextStyle(
+            // color: frontColor,
+            fontSize: fontSize.subTitle2,
+          ),
+        ),
+        Text(
+          cocologNews2,
           style: TextStyle(
               // color: frontColor,
               fontSize: fontSize.subTitle1,

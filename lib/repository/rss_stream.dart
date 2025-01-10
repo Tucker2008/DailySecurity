@@ -4,19 +4,106 @@ import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/cache_manager.dart';
 import 'package:cyber_interigence/repository/preference_manager.dart';
+import 'package:cyber_interigence/util/post_category.dart';
+// import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:webfeed_plus/webfeed_plus.dart';
 
 //
-// 最初にキャッシュにロードしておく
-// RSSを読んでそれをRSSInformationのLISTに変換してキャッシュしておく
-// computeでスレッドを起こそうとしたがうまくキャッシュされない
-// cocologRssはメイン画面のロードが始まるのでここではキャッシュしない
+// キャッシュにロードしておいたニュースソースのRSSinformationをマージ
+// 時系列ソートしてcategoryにソース名を入れる
+// 
+List<RssInformation> margeList = [];
+
+List<RssInformation>? meargeNews(int max) {
+  List<RssInformation> margedList = [];
+  List<RssInformation> tmpList = [];
+
+  // すでにリストがあるならそのまま使う
+  if (margeList.isEmpty) {
+    // キャッシュがないなら早すぎるので返す
+    if (CacheManager().getRssCacheIsEmpty(ipaRss)) {
+      return null;
+    }
+
+    // キャッシュから読み込んでマージする
+    tmpList = CacheManager().getRssCache(ipaRss)!;
+    // 何故かforEach文が使えない
+    for (var element in tmpList) {
+      element.category = ipaCategory;
+    }
+    margeList.addAll(tmpList);
+
+    tmpList = CacheManager().getRssCache(jvnRss)!;
+    for (var element in tmpList) {
+      element.category = jvnCategory;
+    }
+    margeList.addAll(tmpList);
+
+    tmpList = CacheManager().getRssCache(jpcertRss)!;
+    for (var element in tmpList) {
+      element.category = jcrCategory;
+    }
+    margeList.addAll(tmpList);
+    // マージしたリストを時系列にソートする
+    margeList.sort((a, b) => DateFormat('yyyy/MM/dd(E)')
+        .parse(b.date)
+        .compareTo(DateFormat('yyyy/MM/dd(E)').parse(a.date)));
+  }
+
+  // ここで件数指定があれば規定数にして返す
+  if (max > 0) {
+    for (int i = 0; i < max; i++) {
+      margedList.add(margeList[i]);
+    }
+    return margedList;
+  }
+
+  return margeList;
+}
+
+// カテゴリ毎にRSSをフィルタする（ついでに件数も制限する）
+List<RssInformation>? filteringList(
+    List<RssInformation> originList, String category, int maxCount) {
+  List<RssInformation> processedList = [];
+  int counter = 0;
+  // nullチェック
+  if (originList.isEmpty) {
+    return processedList;
+  }
+  // カテゴリチェック
+  for (var item in originList) {
+    // カテゴリとカウントのチェック
+    if (((category.isNotEmpty) && (item.category == category)) &&
+        (counter < maxCount)) {
+      processedList.add(item);
+      counter++;
+    }
+  }
+  // debugPrint("filteringList: $category : ${originList.length} -> $counter");
+  return processedList;
+}
+
 //
-Future<void> initialLoadCache() async {
+// 必要な全てのRSSを読んで、cocologのRSSInformationを返す
+// 時間はかかるがキャッシュに入れておける
+//
+Future<List<RssInformation>> allRssStreaming(String url) async {
   await rssStreaming(ipaRss);
   await rssStreaming(jvnRss);
   await rssStreaming(jpcertRss);
+  return rssStreaming(url);
+}
+
+//
+// News系のRSSを読む
+// allRssStreaming()のサブセット
+//
+Future<List<RssInformation>> allNewsRssStreaming(String url) async {
+  await rssStreaming(ipaRss);
+  await rssStreaming(jvnRss);
+  return rssStreaming(jpcertRss);
 }
 
 //

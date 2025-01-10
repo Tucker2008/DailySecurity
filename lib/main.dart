@@ -2,7 +2,6 @@ import 'package:cyber_interigence/introduction/onboarding_page.dart';
 import 'package:cyber_interigence/pages/main_screen.dart';
 import 'package:cyber_interigence/repository/initial_preference.dart';
 import 'package:cyber_interigence/repository/preference_manager.dart';
-import 'package:cyber_interigence/repository/rss_stream.dart';
 import 'package:cyber_interigence/util/color_provider.dart';
 import 'package:cyber_interigence/util/timer_provider.dart';
 import 'package:flutter/material.dart';
@@ -103,9 +102,6 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
     }
     // 起動時間を初期化
     TimerProvider().updateTimer();
-
-    // キャッシュにロードしておく
-    initialLoadCache();
 
     // 導入画面表示ステータスを返値として終了
     return PreferenceManager().getPreference().introductionState;

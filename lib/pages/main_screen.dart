@@ -1,28 +1,30 @@
 import 'package:cyber_interigence/constant/feed_constant.dart';
 import 'package:cyber_interigence/entry/display_feed.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
-import 'package:cyber_interigence/pages/cocolog_page.dart';
+import 'package:cyber_interigence/pages/entrance_screen.dart';
 import 'package:cyber_interigence/pages/news_main_page.dart';
 import 'package:cyber_interigence/pages/setting_screen.dart';
 import 'package:cyber_interigence/repository/cache_manager.dart';
+import 'package:cyber_interigence/theme/appbar_constant.dart';
 import 'package:cyber_interigence/util/message_provider.dart';
 import 'package:cyber_interigence/util/timer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cyber_interigence/global.dart';
 
+
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _MainScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _MainScreenState();
 }
 
 class _MainScreenState extends ConsumerState<MainScreen>
     with WidgetsBindingObserver {
   //
   // アプリのライフサイクルで再開した時に一定時間が経過したらリロードする
-  //
   @override
   void initState() {
     super.initState();
@@ -85,8 +87,8 @@ class _MainScreenState extends ConsumerState<MainScreen>
 
   // メニューによるスクリーンの定義
   static final _screens = [
-    CocologPage(),
-    const NewsMainPage(),
+    EntranceScreen(),
+    NewsMainPage(arg: false,),
     const SettingScreen(),
   ];
 
@@ -106,6 +108,9 @@ class _MainScreenState extends ConsumerState<MainScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // AppBar ロゴを表示するだけ ----------------
+      appBar: AppbarConstant().getAppbarConstant(),
+
       // ボディ本体はメニュー選択機能
       body: _screens[_selectedIndex],
       // ボトムのナビゲーションバー

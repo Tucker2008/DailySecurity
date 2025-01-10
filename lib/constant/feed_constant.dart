@@ -1,8 +1,15 @@
 // フィード画面で使う文字列群
 
-// 画面タイトル
+// エントランスメニュー
+const entranceTitleUpdate = 'アップデート情報と注意報';
+const entranceTitleNews = 'セキュリティNews';
+const entranceTitleReminder = 'セキュリティリマインダー';
+
+// cocologフィードの説明文（タイトル）
 const cocologTitle1 = "インシデントに学ぶ";
 const cocologTitle2 = "セキュリティアクション";
+const cocologNews1 = "セキュリティ注意報 と";
+const cocologNews2 = "アップデート情報";
 const newsFeedTitle = "セキュリティニュース";
 const newsSettingTitle = "設定および規約確認";
 

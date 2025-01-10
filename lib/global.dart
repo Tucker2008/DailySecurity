@@ -22,6 +22,9 @@ final fontSize = FontSize();
 // 非アクティブの経過時間（これを過ぎるとアプリ再ロードする）
 const int inactiveHours = 3;
 
+// エントランスのニュース数
+const int entranceNewsMax = 4;
+
 // デバッグモードの選択（日々の開発ステップごとに設定）
 // bool debugStructure = false; // 構造変更などのデバッグモード
 // bool debugRssFeed = false; // RSSリーダ機能のデバッグ

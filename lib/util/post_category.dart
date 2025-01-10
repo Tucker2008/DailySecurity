@@ -1,8 +1,21 @@
 // ポストされた投稿のカテゴリを判別するテーブル
-
-// カテゴリ
+// ニュースのカテゴリもここで定義
+//
 import 'package:flutter/material.dart';
 
+//
+// ニュースカテゴリ定義
+//
+const ipaCategory = "ipa";
+const jvnCategory = "jvn";
+const jcrCategory = "jcr";
+
+const newsCategory = "news";
+const columnCategory = "column";
+
+//
+// cocolog 投稿カテゴリ 定義
+//
 enum PostCategory {
   unknownCategoty,
   testCategory,
@@ -27,8 +40,8 @@ final Map<String, int> postCategoryMap = {
   "unknown": unknownCategoryIndex,
   "test": testCategoryIndex,
   "info": infoCategoryIndex,
-  "news": newsCategoryIndex,
-  "column": columnCategoryIndex,
+  newsCategory: newsCategoryIndex,
+  columnCategory: columnCategoryIndex,
   "contents": contentCategoryIndex,
   // "N/A": notAvailableIndex,
 };
@@ -45,12 +58,28 @@ final Map<int, IconData> postCategoryIconMap = {
 };
 
 IconData postCategoryIcon(String categoryString) {
-  if (postCategoryMap.containsKey(categoryString)) {
+  if (iconAvalable(categoryString)) {
     final indexNum = postCategoryMap[categoryString];
     if (postCategoryIconMap.containsKey(indexNum)) {
       return postCategoryIconMap[indexNum]!;
     }
   }
-  // debugPrint("postCategoryIcon: $categoryString ${categoryString.isNotEmpty}");
   return postCategoryIconMap[unknownCategoryIndex]!;
+}
+
+bool iconAvalable(String category) {
+  return postCategoryMap.containsKey(category);
+}
+
+ImageProvider<Object> postCategotyImageicon(String category) {
+  switch (category) {
+    case ipaCategory:
+      return const AssetImage('images/ipa_logo.png');
+    case jvnCategory:
+      return const AssetImage('images/jvn_logo.png');
+    case jcrCategory:
+      return const AssetImage('images/jcr_logo.png');
+    default:
+      return const AssetImage('images/ipa_logo.png');
+  }
 }
