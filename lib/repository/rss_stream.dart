@@ -13,12 +13,11 @@ import 'package:webfeed_plus/webfeed_plus.dart';
 //
 // キャッシュにロードしておいたニュースソースのRSSinformationをマージ
 // 時系列ソートしてcategoryにソース名を入れる
-// 
+//
 List<RssInformation> margeList = [];
 
 List<RssInformation>? meargeNews(int max) {
   List<RssInformation> margedList = [];
-  List<RssInformation> tmpList = [];
 
   // すでにリストがあるならそのまま使う
   if (margeList.isEmpty) {
@@ -28,24 +27,23 @@ List<RssInformation>? meargeNews(int max) {
     }
 
     // キャッシュから読み込んでマージする
-    tmpList = CacheManager().getRssCache(ipaRss)!;
     // 何故かforEach文が使えない
-    for (var element in tmpList) {
-      element.category = ipaCategory;
+    for (var element in CacheManager().getRssCache(ipaRss)!) {
+      margeList.add(element.copyWith(category: ipaCategory));
     }
-    margeList.addAll(tmpList);
 
-    tmpList = CacheManager().getRssCache(jvnRss)!;
-    for (var element in tmpList) {
-      element.category = jvnCategory;
+    if (!CacheManager().getRssCacheIsEmpty(jvnRss)) {
+      for (var element in CacheManager().getRssCache(jvnRss)!) {
+        margeList.add(element.copyWith(category: jvnCategory));
+      }
     }
-    margeList.addAll(tmpList);
 
-    tmpList = CacheManager().getRssCache(jpcertRss)!;
-    for (var element in tmpList) {
-      element.category = jcrCategory;
+    if (!CacheManager().getRssCacheIsEmpty(jpcertRss)) {
+      for (var element in CacheManager().getRssCache(jpcertRss)!) {
+        margeList.add(element.copyWith(category: jcrCategory));
+      }
     }
-    margeList.addAll(tmpList);
+
     // マージしたリストを時系列にソートする
     margeList.sort((a, b) => DateFormat('yyyy/MM/dd(E)')
         .parse(b.date)
@@ -157,20 +155,13 @@ Future<List<RssInformation>> rssStreaming(String url) async {
     // LastLoginから規定(30日)以内で、規定内件数以内である
     DateTime postDate = item.dc?.date as DateTime;
 
-    // if (debugRssFeed) {
-    //   debugPrint(
-    //       "informationList.add: ${lastLogin.difference(postDate).inDays} : $feedCounter");
-    // }
-
     if ((lastLogin.difference(postDate).inDays > maxFeedDuration) ||
         (feedCounter > minFeedCount)) {
       break;
     }
     feedCounter++;
 
-    // debugPrint(
-    //     "duration: ${lastLogin.difference(postDate).inDays},counter $feedCounter");
-
+  //   デバッグ確認
     // if (debugRssFeed) {
     //   debugPrint("item author: ${item.author}");
     //   debugPrint("item categories: ${item.categories?.toList().toString()}");
@@ -188,7 +179,7 @@ Future<List<RssInformation>> rssStreaming(String url) async {
     //   debugPrint("item enclosure: ${item.enclosure.toString()}");
     // }
   }
-  //   デバッグ確認
+
   // if (debugRssFeed || debugCache) {
   //   debugPrint("title: ${feed.title}");
   //   debugPrint("description: ${feed.description}");

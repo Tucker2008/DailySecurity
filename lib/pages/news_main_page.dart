@@ -2,9 +2,11 @@ import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
+import 'package:cyber_interigence/repository/bookmark_manager.dart';
 import 'package:cyber_interigence/repository/launch_url.dart';
 import 'package:cyber_interigence/repository/rss_stream.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
+import 'package:cyber_interigence/util/bookmark_provider.dart';
 import 'package:cyber_interigence/util/color_provider.dart';
 import 'package:cyber_interigence/util/note_provider.dart';
 import 'package:cyber_interigence/util/post_category.dart';
@@ -51,19 +53,29 @@ class NewsMainPage extends ConsumerWidget {
     final AsyncValue<List<RssInformation>> activity =
         ref.watch(feedProvider(""));
     activity.when(
-        data: (data) {
-          informationList = data;
-        },
-        error: (error, stacktrace) => noteProvider.setNote(error.toString()),
-        loading: CircularProgressIndicator.new);
+      data: (data) {
+        informationList = data;
+      },
+      error: (error, stacktrace) => noteProvider.setNote(error.toString()),
+      loading: () => splashScreenNoContext(),
+    );
 
     // NewsFeedのまとめソートを受け取る
     // IPA等のニュースマージが間に合わない場合にはぐるぐるを出す
     if (meargeNews(0) == null) {
       return splashScreen(context);
     } else {
-      informationList = meargeNews(0)!;
+      // 取得したリストにブックマークされているかフラグを付ける
+      informationList = BookmarkManager().bookmarkedList(meargeNews(0)!);
     }
+
+    // BookMarkProviderを定義
+    final bookmarkProvider =
+        StateNotifierProvider<BookmarkNotifier, int>((ref) {
+      return BookmarkNotifier();
+    });
+    ref.watch(bookmarkProvider);
+    BookmarkNotifier bookmarkNotifier = ref.read(bookmarkProvider.notifier);
 
     return Scaffold(
         // AppBar は main_screenにて対応済みの場合には出さず単独の時は出す
@@ -137,10 +149,9 @@ class NewsMainPage extends ConsumerWidget {
                         // 行間を少し狭く
                         height: 1.2,
                       ),
-                      onTap: () => {
-                        launchURL(
-                            context, _customUrl(informationList[index].link!))
-                      },
+                      onTap: () => launchURL(
+                          context, _customUrl(informationList[index].link!)),
+
                       textColor: Theme.of(context).colorScheme.onSurface,
                       // カテゴリ毎のアイコン
                       // カテゴリ指定がない場合だけにアイコンを表示する
@@ -155,16 +166,22 @@ class NewsMainPage extends ConsumerWidget {
                               : CircleAvatar(
                                   backgroundImage: postCategotyImageicon(
                                       informationList[index].category!),
-                                  radius: 12.0,    //ここは半径を指定する
+                                  radius: 12.0, //ここは半径を指定する
                                 ))
                           : null,
                       // 記事右のリンクアイコン
-                      trailing: informationList[index].link!.isNotEmpty
-                          ? const Icon(
-                              Icons.link,
-                              size: 24,
-                            )
-                          : null,
+                      trailing: GestureDetector(
+                        onTap: () {
+                          bookmarkNotifier.flipBookmark(informationList[index]);
+                        },
+                        child: informationList[index].bookmarked
+                            ? Icon(Icons.bookmark,
+                                size: 24,
+                                color: Theme.of(context).colorScheme.primary)
+                            : Icon(Icons.bookmark_outline,
+                                size: 24,
+                                color: Theme.of(context).colorScheme.primary),
+                      ),
                     ),
                   );
                 },

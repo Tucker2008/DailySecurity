@@ -76,7 +76,7 @@ class EntranceScreen extends ConsumerWidget {
     }
 
     //ここまでRSS取得関連-----------
-
+    // TODO: 画面サイズに伴う各種パラメータのパターン化が必要
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -124,7 +124,7 @@ class EntranceScreen extends ConsumerWidget {
                       // newsカテゴリを表示する ----------------
                       ListView.builder(
                         // ★行の高さ指定
-                        itemExtent: fontSize.body1 * 1.5,
+                        itemExtent: fontSize.body1 * 1.6,
                         // アイテムの数を設定するフリをしてリストのフィルタ実施
                         itemCount: newsList.length, //informationList.length,
 
@@ -151,11 +151,12 @@ class EntranceScreen extends ConsumerWidget {
                               // 長いタイトルを省略表示
                               // overflow: TextOverflow.ellipsis,を行数を指定して使うとちょうどいい
                               overflow: TextOverflow.ellipsis,
-                              maxLines: 1, //titleLineMax -> 1
+                              maxLines: 1,
+                              softWrap: true,
                             ),
                             titleTextStyle: TextStyle(
                               fontWeight: FontWeight.w500,
-                              fontSize: fontSize.body1, //subTitle1 ->
+                              fontSize: fontSize.body1,
                               color:
                                   Theme.of(context).colorScheme.onTertiaryFixed,
                               // 行間を少し狭く
@@ -215,7 +216,8 @@ class EntranceScreen extends ConsumerWidget {
                               Text(
                                 cocologTitle1,
                                 style: TextStyle(
-                                  fontSize: fontSize.body1,
+                                  fontSize: fontSize.body2,
+                                  fontWeight: FontWeight.w700,
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
                                 ),
@@ -223,7 +225,7 @@ class EntranceScreen extends ConsumerWidget {
                               // columnカテゴリを表示する ----------------
                               ListView.builder(
                                 // ★行の高さ指定
-                                itemExtent: fontSize.headlineH6 * 4,
+                                itemExtent: fontSize.headlineH6 * 4.2,
                                 // アイテムの数を設定するフリをしてリストのフィルタ実施
                                 itemCount:
                                     columnList.length, //informationList.length,
@@ -254,15 +256,16 @@ class EntranceScreen extends ConsumerWidget {
                                       // overflow: TextOverflow.ellipsis,を行数を指定して使うとちょうどいい
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 3, //titleLineMax -> 1
+                                      softWrap: true,
                                     ),
                                     titleTextStyle: TextStyle(
                                       fontWeight: FontWeight.w500,
-                                      fontSize: fontSize.body1, //subTitle1 ->
+                                      fontSize: fontSize.body1,
                                       color: Theme.of(context)
                                           .colorScheme
                                           .onTertiaryFixed,
                                       // 行間を少し狭く
-                                      height: 1.5,
+                                      height: 1.3,
                                     ),
                                     // onTap: () => {}, //個別タップはない
                                     // {launchURL(context, informationList[index].link!)},
@@ -312,7 +315,7 @@ class EntranceScreen extends ConsumerWidget {
                               Text(
                                 entranceTitleNews,
                                 style: TextStyle(
-                                  fontSize: fontSize.body1,
+                                  fontSize: fontSize.body2,
                                   color: Theme.of(context)
                                       .colorScheme
                                       .inverseSurface,
@@ -322,7 +325,7 @@ class EntranceScreen extends ConsumerWidget {
                               // 他ニュースを表示する ----------------
                               ListView.builder(
                                 // ★行の高さ指定
-                                itemExtent: fontSize.headlineH6 * 4.2,
+                                itemExtent: fontSize.headlineH6 * 4.3,
                                 // アイテムの数を設定するフリをしてリストのフィルタ実施
                                 itemCount: publicNewsList.length, //
 
@@ -351,7 +354,8 @@ class EntranceScreen extends ConsumerWidget {
                                       // 長いタイトルを省略表示
                                       // overflow: TextOverflow.ellipsis,を行数を指定して使うとちょうどいい
                                       overflow: TextOverflow.ellipsis,
-                                      maxLines: 3, //titleLineMax -> 1
+                                      maxLines: 3,
+                                      softWrap: true,
                                     ),
                                     titleTextStyle: TextStyle(
                                       fontWeight: FontWeight.w600,
@@ -360,7 +364,7 @@ class EntranceScreen extends ConsumerWidget {
                                           .colorScheme
                                           .onTertiaryFixed,
                                       // 行間を少し狭く
-                                      height: 1.5,
+                                      height: 1.3,
                                     ),
                                     // onTap: () => {}, //個別タップはない
 
