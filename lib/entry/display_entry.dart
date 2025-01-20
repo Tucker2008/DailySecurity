@@ -59,14 +59,17 @@ class DisplayEntry {
                       child: Icon(
                         postCategoryIcon(postStructure!.category),
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
-                        size: 32,
+                        size: 32 * (sizeConfig.screenWidthTimes!),
                       ),
                     ),
                     const SizedBox(
                       width: 8,
                     ),
                     Container(
-                      width: 320,
+                      // 画面比率で計算 sizeConfig
+                      // 64は上のicon,sizedbox,paddingの合計値
+                      width: sizeConfig.screenWidth! -
+                          (64 * sizeConfig.screenWidthTimes!),
                       padding:
                           const EdgeInsets.only(left: 8.0, top: 16, bottom: 16),
                       child: Column(
@@ -151,7 +154,7 @@ class DisplayEntry {
                 height: 16,
               ),
               Container(
-                height: 24,
+                height: 24 * (sizeConfig.screenWidthTimes!),
                 alignment: Alignment.centerLeft,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
@@ -173,7 +176,7 @@ class DisplayEntry {
                   ],
                 ),
               ),
-              // 4段め　リンク集
+              // 4段め  リンク集
               Column(
                 children: linkList,
               ),
@@ -217,7 +220,7 @@ class DisplayEntry {
                   alignment: Alignment.center,
                   child: Icon(
                     Icons.web,
-                    size: 16.0,
+                    size: 16.0 * (sizeConfig.screenWidthTimes!),
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
@@ -228,7 +231,10 @@ class DisplayEntry {
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.only(left: 4.0, right: 4.0),
                   // height: 32,
-                  width: 360,
+                  // 画面比率で設定 sizeConfig
+                  // 36は上のicon,sizedbox,paddingの合計値
+                  width: sizeConfig.screenWidth! -
+                      (36 * sizeConfig.screenWidthTimes!),
                   child: Text(
                     postStructure!.contentHref[itemCount].toString(),
                     style: TextStyle(

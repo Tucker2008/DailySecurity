@@ -1,3 +1,4 @@
+import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/introduction/onboarding_page.dart';
 import 'package:cyber_interigence/pages/main_screen.dart';
 import 'package:cyber_interigence/repository/bookmark_manager.dart';
@@ -14,6 +15,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:cyber_interigence/util/logo_provider.dart';
+import 'package:cyber_interigence/repository/cache_manager.dart';
+import 'package:cyber_interigence/util/message_provider.dart';
+import 'package:cyber_interigence/repository/cycle_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +40,9 @@ class MyApp extends StatelessWidget {
     TextTheme textTheme =
         createTextTheme(context, "Noto Sans Gothic", "Sawarabi Gothic");
     MaterialTheme theme = MaterialTheme(textTheme);
+    // 画面サイズ関連データを初期化
+    sizeConfig.init(context);
+    fontSize.init(sizeConfig.screenWidthTimes!);
 
     // アプリ起動
     return MaterialApp(
@@ -59,7 +66,65 @@ class FirstScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _FirstScreenState();
 }
 
-class _FirstScreenState extends ConsumerState<FirstScreen> {
+class _FirstScreenState extends ConsumerState<FirstScreen>
+    with WidgetsBindingObserver {
+  //
+  // アプリのライフサイクルで再開した時に一定時間が経過したらリロードする
+  //
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    bool notifierMsgState = false;
+    switch (state) {
+      // アプリは表示されているが、フォーカスがあたっていない状態（対応なし）
+      case AppLifecycleState.inactive:
+        break;
+      //アプリがバックグラウンドに遷移し、入力不可な一時停止状態（対応なし）
+      case AppLifecycleState.paused:
+        break;
+      // アプリが終了する時に通る終了処理用の状態（対応もなし）
+      case AppLifecycleState.detached:
+        break;
+      // hiddenは意味不明(再インストールした時に出た)
+      case AppLifecycleState.hidden:
+        break;
+      //
+      // 再開された時には新たに記事取得する様にする
+      // アプリがフォアグランドに遷移し（paused状態から復帰）、復帰処理用の状態
+      case AppLifecycleState.resumed:
+        // ブラウザ起動して戻るとresumedになるので一定時間経過で判別する
+        if (TimerProvider().inactiveDiference()) {
+          // キャッシュを削除
+          CacheManager().initCache();
+          // 再開時間をアップデート
+          TimerProvider().updateTimer();
+        }
+        // Notificationから起動されたか？
+        if (MessageProvider().getMsg().isNotEmpty) {
+          MessageProvider().removeMsg();
+        }
+        if (!notifierMsgState) {
+          // 画面を再描画
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => super.widget));
+        }
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // firstContainerの色指定
@@ -106,6 +171,9 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
 
     // ブックマークをロードする
     BookmarkManager().loadBookmarks();
+
+    // セキュリティシナリオの初期化
+    CycleManager().init();
 
     // 導入画面表示ステータスを返値として終了
     return PreferenceManager().getPreference().introductionState;

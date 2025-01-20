@@ -47,6 +47,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
     // イントロ画面の表示詳細設定
     TextStyle bodyStyle = TextStyle(
       fontSize: fontSize.headlineH6,
+      height: 1.3, //行間指定(これをしないとiOSで切れる)
       color: Theme.of(context).colorScheme.onSurfaceVariant,
     );
     PageDecoration pageDecoration = PageDecoration(
@@ -104,6 +105,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
             image: _buildImage(image1st),
             decoration: pageDecoration,
           ),
+          // ２ページ目
           PageViewModel(
             titleWidget: Container(
               padding: const EdgeInsets.only(left: 16.0),
@@ -127,6 +129,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
             image: _buildImage(image2nd),
             decoration: pageDecoration,
           ),
+          // ３ページ目
           PageViewModel(
             titleWidget: Container(
               padding: const EdgeInsets.only(left: 16.0),
@@ -162,18 +165,22 @@ class OnBoardingPageState extends State<OnBoardingPage> {
         back: Icon(
           Icons.arrow_back,
           color: Theme.of(context).colorScheme.onTertiaryFixed,
+          size: 24 * (sizeConfig.screenWidthTimes!),
         ),
         skip: Text(skipTxt,
             style: TextStyle(
+              fontSize: fontSize.body1,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onTertiaryFixed,
             )),
         next: Icon(
           Icons.arrow_forward,
           color: Theme.of(context).colorScheme.onTertiaryFixed,
+          size: 24 * (sizeConfig.screenWidthTimes!),
         ),
         done: Text(completeTxt,
             style: TextStyle(
+              fontSize: fontSize.body1,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onTertiaryFixed,
             )),

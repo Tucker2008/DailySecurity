@@ -20,3 +20,4 @@ const mainMenuHome = "ホーム";
 const mainMenuNews = "ニュース";
 const mainMenuSetting = "設定";
 const mainMenuBookmark = "ブックマーク";
+const mainMenuRiminder = 'リマインダー';

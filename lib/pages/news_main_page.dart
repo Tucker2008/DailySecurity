@@ -161,12 +161,14 @@ class NewsMainPage extends ConsumerWidget {
                               ? Icon(
                                   postCategoryIcon(
                                       informationList[index].category!),
-                                  size: 24,
+                                  size: 24 * (sizeConfig.screenWidthTimes!),
                                 )
                               : CircleAvatar(
                                   backgroundImage: postCategotyImageicon(
                                       informationList[index].category!),
-                                  radius: 12.0, //ここは半径を指定する
+                                  radius: 12.0 *
+                                      (sizeConfig
+                                          .screenWidthTimes!), //ここは半径を指定する
                                 ))
                           : null,
                       // 記事右のリンクアイコン
@@ -176,10 +178,10 @@ class NewsMainPage extends ConsumerWidget {
                         },
                         child: informationList[index].bookmarked
                             ? Icon(Icons.bookmark,
-                                size: 24,
+                                size: 24 * (sizeConfig.screenWidthTimes!),
                                 color: Theme.of(context).colorScheme.primary)
                             : Icon(Icons.bookmark_outline,
-                                size: 24,
+                                size: 24 * (sizeConfig.screenWidthTimes!),
                                 color: Theme.of(context).colorScheme.primary),
                       ),
                     ),

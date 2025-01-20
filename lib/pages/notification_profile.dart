@@ -114,10 +114,10 @@ class NotificationProfile extends ConsumerWidget {
                           onChanged: (value) {
                             // 裏返す
                             switchNotifier.notificationFlip(value);
-                            if (debugPreference) {
-                              debugPrint(
-                                  "onChanged: notification: $value : ${statusFlg.notificationState} and myPreference = ${PreferenceManager().getPreference().toJson().toString()}");
-                            }
+                            // if (debugPreference) {
+                            //   debugPrint(
+                            //       "onChanged: notification: $value : ${statusFlg.notificationState} and myPreference = ${PreferenceManager().getPreference().toJson().toString()}");
+                            // }
                           },
                         ),
                       ],

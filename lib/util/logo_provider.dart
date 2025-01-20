@@ -4,6 +4,7 @@
 //
 
 // サービスロゴの大きさ指定
+import 'package:cyber_interigence/global.dart';
 import 'package:flutter/material.dart';
 
 const double logoHeight = 36.0;
@@ -31,8 +32,8 @@ class LogoProvider {
   Widget getServiceLogo() {
     return Image.asset(
       _blackAndWhite ? logoBlackFile : logoWhiteFile,
-      height: logoHeight,
-      width: logoWidth,
+      height: logoHeight * (sizeConfig.screenWidthTimes!),
+      width: logoWidth * (sizeConfig.screenWidthTimes!),
     );
   }
 }

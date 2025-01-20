@@ -1,4 +1,5 @@
 import 'package:cyber_interigence/theme/font_size.dart';
+import 'package:cyber_interigence/theme/size_config.dart';
 
 // グローバル定数定義
 //
@@ -25,10 +26,14 @@ const int inactiveHours = 3;
 // エントランスのニュース数
 const int entranceNewsMax = 4;
 
+// サイズの定義
+// 参照箇所が多いのでグローバルに定義
+final sizeConfig = SizeConfig();
+
 // デバッグモードの選択（日々の開発ステップごとに設定）
 // bool debugStructure = false; // 構造変更などのデバッグモード
 // bool debugRssFeed = false; // RSSリーダ機能のデバッグ
-bool debugPreference = true; // ユーザ設定のデバッグ
+// bool debugPreference = true; // ユーザ設定のデバッグ
 // bool debugEntryDetails = false; // cocologエントリの中身のデバッグ
 // bool debugEntry = false; // cocologエントリのデバッグ
 // bool debugOnboard = false; // 起動１回目の画面デバッグ用

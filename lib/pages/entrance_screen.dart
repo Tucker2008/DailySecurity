@@ -4,7 +4,9 @@ import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/pages/cocolog_page.dart';
+import 'package:cyber_interigence/pages/cycle_screen.dart';
 import 'package:cyber_interigence/pages/news_main_page.dart';
+import 'package:cyber_interigence/repository/cycle_manager.dart';
 import 'package:cyber_interigence/repository/preference_manager.dart';
 import 'package:cyber_interigence/repository/rss_stream.dart';
 import 'package:cyber_interigence/util/note_provider.dart';
@@ -76,7 +78,6 @@ class EntranceScreen extends ConsumerWidget {
     }
 
     //ここまでRSS取得関連-----------
-    // TODO: 画面サイズに伴う各種パラメータのパターン化が必要
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -84,7 +85,7 @@ class EntranceScreen extends ConsumerWidget {
             // アップデート情報
             Expanded(
               // 比率指定
-              flex: 3,
+              flex: 6, // 3 * 2
               child: GestureDetector(
                 // タップ処理
                 onTap: () {
@@ -179,7 +180,7 @@ class EntranceScreen extends ConsumerWidget {
 
             // インシデントから学ぶ＆セキュリティニュース
             Expanded(
-              flex: 7,
+              flex: 14, // 7 * 2
               child: SizedBox(
                 width: double.infinity,
                 child: Row(
@@ -391,10 +392,17 @@ class EntranceScreen extends ConsumerWidget {
 
             // セキュリティリマインダー
             Expanded(
-              flex: 2,
+              flex: 3, // 2 * 2
               child: GestureDetector(
                 onTap: () {
-                  debugPrint("セキュリティリマインダー");
+                  //  CocologPageのカテゴリ指定で起動
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const CycleScreen(
+                        appbar: true,
+                      ),
+                    ),
+                  );
                 },
                 child: Container(
                   padding: const EdgeInsets.all(8.0),
@@ -409,12 +417,28 @@ class EntranceScreen extends ConsumerWidget {
                       opacity: 0.3,
                     ),
                   ),
-                  child: Text(
-                    entranceTitleReminder,
-                    style: TextStyle(
-                      fontSize: fontSize.body1,
-                      color: Theme.of(context).colorScheme.onSecondary,
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entranceTitleReminder,
+                        style: TextStyle(
+                          fontSize: fontSize.body1,
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        CycleManager().getScenarioNumberText(),
+                        style: TextStyle(
+                          fontSize: fontSize.body2,
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

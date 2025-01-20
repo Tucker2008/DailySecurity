@@ -1,16 +1,13 @@
 import 'package:cyber_interigence/constant/feed_constant.dart';
-import 'package:cyber_interigence/entry/display_feed.dart';
 import 'package:cyber_interigence/pages/bookmark_page.dart';
 import 'package:cyber_interigence/pages/entrance_screen.dart';
 import 'package:cyber_interigence/pages/news_main_page.dart';
 import 'package:cyber_interigence/pages/setting_screen.dart';
-import 'package:cyber_interigence/repository/cache_manager.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
-import 'package:cyber_interigence/util/message_provider.dart';
-import 'package:cyber_interigence/util/timer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cyber_interigence/global.dart';
+import 'package:cyber_interigence/pages/cycle_screen.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -19,74 +16,14 @@ class MainScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends ConsumerState<MainScreen>
-    with WidgetsBindingObserver {
-  //
-  // アプリのライフサイクルで再開した時に一定時間が経過したらリロードする
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    bool notifierMsgState = false;
-    switch (state) {
-      // アプリは表示されているが、フォーカスがあたっていない状態（対応なし）
-      case AppLifecycleState.inactive:
-        break;
-      //アプリがバックグラウンドに遷移し、入力不可な一時停止状態（対応なし）
-      case AppLifecycleState.paused:
-        break;
-      // アプリが終了する時に通る終了処理用の状態（対応もなし）
-      case AppLifecycleState.detached:
-        break;
-      // hiddenは意味不明(再インストールした時に出た)
-      case AppLifecycleState.hidden:
-        break;
-      //
-      // 再開された時には新たに記事取得する様にする
-      // アプリがフォアグランドに遷移し（paused状態から復帰）、復帰処理用の状態
-      case AppLifecycleState.resumed:
-        // ブラウザ起動して戻るとresumedになるので一定時間経過で判別する
-        if (TimerProvider().inactiveDiference()) {
-          // キャッシュを削除
-          CacheManager().initCache();
-          // 再開時間をアップデート
-          TimerProvider().updateTimer();
-        }
-        // Notificationから起動されたか？
-        if (MessageProvider().getMsg().isNotEmpty) {
-          // debugPrint(
-          //     "didChangeAppLifecycleState resume: ${MessageProvider().getMsg()}");
-          notifierMsgState = const DisplayFeed()
-              .findLaunchPage(context, MessageProvider().getMsg());
-          MessageProvider().removeMsg();
-        }
-        if (!notifierMsgState) {
-          // 画面を再描画
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => super.widget));
-        }
-        break;
-    }
-  }
-
+class _MainScreenState extends ConsumerState<MainScreen> {
   // メニューによるスクリーンの定義
   static final _screens = [
     EntranceScreen(),
     NewsMainPage(
       arg: false,
     ),
+    const CycleScreen(appbar: false),
     BookmarkPage(),
     const SettingScreen(),
   ];
@@ -118,25 +55,28 @@ class _MainScreenState extends ConsumerState<MainScreen>
           indicatorColor: Theme.of(context).colorScheme.tertiary,
           labelTextStyle: WidgetStateProperty.all(
             TextStyle(
-              fontSize: fontSize.menu,
+              fontSize: fontSize.menu * (sizeConfig.screenWidthTimes!),
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
+          // これが中央アイコンとのバランスが良い反転方法
+          indicatorShape: const CircleBorder(),
+          // ------
         ),
         child: NavigationBar(
           backgroundColor: Theme.of(context).colorScheme.surfaceDim,
           shadowColor: Theme.of(context).colorScheme.primary,
           animationDuration: const Duration(seconds: 1),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          height: 52, //NewsPicsベンチマーク値
+          height: 52 * (sizeConfig.screenWidthTimes!), //NewsPicsベンチマーク値
           selectedIndex: _selectedIndex,
           onDestinationSelected: _onItemTapped,
-          destinations: const <NavigationDestination>[
+          destinations: <NavigationDestination>[
             NavigationDestination(
               icon: Icon(
                 Icons.home,
-                size: 24,
+                size: 24 * (sizeConfig.screenWidthTimes!),
               ),
               label: mainMenuHome,
               tooltip: '$cocologTitle1 $cocologTitle2',
@@ -144,24 +84,68 @@ class _MainScreenState extends ConsumerState<MainScreen>
             NavigationDestination(
               icon: Icon(
                 Icons.newspaper,
-                size: 24,
+                size: 24 * (sizeConfig.screenWidthTimes!),
               ),
               label: mainMenuNews,
               tooltip: newsFeedTitle,
             ),
             NavigationDestination(
+              icon: CircleAvatar(
+                radius: 22 * (sizeConfig.screenWidthTimes!),
+                child: CircleAvatar(
+                  radius: 20 * (sizeConfig.screenWidthTimes!),
+                  backgroundColor: Theme.of(context).colorScheme.surfaceDim,
+                  child: Icon(
+                    Icons.calendar_month,
+                    size: 24 * (sizeConfig.screenWidthTimes!),
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
+                ),
+              ),
+              selectedIcon: CircleAvatar(
+                radius: 22 * (sizeConfig.screenWidthTimes!),
+                child: CircleAvatar(
+                  radius: 20 * (sizeConfig.screenWidthTimes!),
+                  backgroundColor: Theme.of(context).colorScheme.tertiary,
+                  child: Icon(
+                    Icons.calendar_month,
+                    size: 24 * (sizeConfig.screenWidthTimes!),
+                    color: Theme.of(context).colorScheme.surfaceDim,
+                  ),
+                ),
+              ),
+              label: mainMenuRiminder,
+              tooltip: entranceTitleReminder,
+            ),
+            NavigationDestination(
               icon: Icon(
                 Icons.bookmark,
+                size: 24 * (sizeConfig.screenWidthTimes!),
+                color: Theme.of(context).colorScheme.tertiary,
               ),
               label: mainMenuBookmark,
               tooltip: bookmarkTitle,
+              // 何故かここは指定しないと反転しない
+              selectedIcon: Icon(
+                Icons.bookmark,
+                size: 24 * (sizeConfig.screenWidthTimes!),
+                color: Theme.of(context).colorScheme.surfaceDim,
+              ),
             ),
             NavigationDestination(
               icon: Icon(
                 Icons.settings,
+                size: 24 * (sizeConfig.screenWidthTimes!),
+                color: Theme.of(context).colorScheme.tertiary,
               ),
               label: mainMenuSetting,
               tooltip: newsSettingTitle,
+              // 何故かここは指定しないと反転しない
+              selectedIcon: Icon(
+                Icons.settings,
+                size: 24 * (sizeConfig.screenWidthTimes!),
+                color: Theme.of(context).colorScheme.surfaceDim,
+              ),
             ),
           ],
         ),

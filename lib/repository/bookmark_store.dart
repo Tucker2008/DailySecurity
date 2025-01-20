@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:cyber_interigence/global.dart';
+// import 'package:flutter/material.dart';
+// import 'package:cyber_interigence/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' as convert;
 import 'package:cyber_interigence/model/rss_information.dart';
@@ -27,9 +27,9 @@ class BookmarkStore {
 
     //何も保存されていない場合はダミーを１件生成して返す
     if (encoded == null) {
-      if (debugPreference) {
-        debugPrint("loadBookmark: nothing bookmark");
-      }
+      // if (debugPreference) {
+      //   debugPrint("loadBookmark: nothing bookmark");
+      // }
       final RssInformation zeroInfo = RssInformation(
         date: DateTime.now().toString(),
         title: "",

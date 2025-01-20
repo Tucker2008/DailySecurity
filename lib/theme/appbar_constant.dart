@@ -1,3 +1,4 @@
+import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/util/logo_provider.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class AppbarConstant {
   PreferredSizeWidget getAppbarConstant() {
     return PreferredSize(
       // AppBarの大きさ指定
-      preferredSize: const Size.fromHeight(kToolbarHeight),
+      preferredSize: const Size.fromHeight(kToolbarHeight) * (sizeConfig.screenWidthTimes!),
       child: AppBar(
         title: LogoProvider().getServiceLogo(),
         centerTitle: true,
