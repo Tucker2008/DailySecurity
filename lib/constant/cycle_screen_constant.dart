@@ -26,7 +26,7 @@ const assertUpdateDoing = '注意喚起しました';
 const winupdateMessage = "Windows Updateは毎月定例的に配布されます。\nアップデートを実施したら";
 const passwordUpdateMessage = "パスワードの更新は90日程度ごとに定期的な更新が推奨されます。\nパスワードを更新したら";
 const virusUpdateMessage =
-    "ウィルスチェックまたはEDPのパターンファイルを定期的に更新することが推奨されます。\nウィルス定義ファイルを更新したら";
+    "ウィルス対策ソフトのパターンファイルを定期的に更新することが推奨されます。\nウィルスパターンファイルを更新したら";
 const dataBackupMessage =
     "データのバックアップは定期的に実施するばかりではなく、バックアップされているか定期的に確認することが推奨されます。\nバックアップの確認をしたら";
 const fishingMessage =
