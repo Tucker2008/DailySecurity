@@ -40,7 +40,7 @@ class _PdfPageState extends ConsumerState<PdfPage> {
       _isFirst = false;
       // 指定URLを取得して
       url = UrlProvider().getUrl();
-      debugPrint("_PdfPageState build $url");
+      // debugPrint("_PdfPageState build $url");
       // 指定コンテナを受領
       setDividerContainer(WidgetProvider().getWidget());
     }

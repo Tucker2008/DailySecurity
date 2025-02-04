@@ -1,8 +1,8 @@
 import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:cyber_interigence/repository/launch_url.dart';
-import 'package:cyber_interigence/util/post_category.dart';
 import 'package:cyber_interigence/model/post_structure.dart';
+import 'package:cyber_interigence/util/tile_container.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -30,83 +30,63 @@ class DisplayEntry {
 
     return SafeArea(
       child: SingleChildScrollView(
-        child: Container(
-          // 画面全体の背景色（secondaryContainer）
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface, // これに特に意味はない？
-            border: Border.all(
-                color: Theme.of(context).colorScheme.tertiary, width: 2.0),
-          ),
+        child: SizedBox(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Container(
-                // タイトル部分だけは背景にPrimeryで色付け
-                decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .tertiaryContainer, // primaryContainer
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      width: 16,
-                    ),
-                    // アイコン表示部分
-                    Container(
-                      alignment: Alignment.center,
-                      child: Icon(
-                        postCategoryIcon(postStructure!.category),
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                        size: 32 * (sizeConfig.screenWidthTimes!),
+              // Tile型Containerでタイトル部分を表示（統一デザイン）
+              containerTileContainer(
+                context,
+                Container(
+                  // 画面比率で計算 sizeConfig
+                  // 64は上のicon,sizedbox,paddingの合計値
+                  width: sizeConfig.screenWidth! -
+                      (64 * sizeConfig.screenWidthTimes!),
+                  padding: const EdgeInsets.only(
+                      left: 0, top: 4, bottom: 4, right: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 記事のタイトル
+                      Text(
+                        postStructure!.entoryTitle,
+                        style: TextStyle(
+                          fontSize: fontSize.subTitle1,
+                          decoration: TextDecoration.none,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(4294967295),
+                          // 行間を少し狭く
+                          height: 1.2,
+                        ),
+                        softWrap: true,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Container(
-                      // 画面比率で計算 sizeConfig
-                      // 64は上のicon,sizedbox,paddingの合計値
-                      width: sizeConfig.screenWidth! -
-                          (64 * sizeConfig.screenWidthTimes!),
-                      padding:
-                          const EdgeInsets.only(left: 8.0, top: 16, bottom: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 記事のタイトル
-                          Text(
-                            postStructure!.entoryTitle,
-                            style: TextStyle(
-                              fontSize: fontSize.subTitle1,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer, // onPrimaryContainer
-                              decoration: TextDecoration.none,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
 
-                          // 投稿日付
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              "${DateFormat('y/M/d').format(postStructure!.dateHeader)} 投稿記事",
-                              style: TextStyle(
-                                  fontSize: fontSize.caption,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer, // onPrimaryContainer
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.normal),
-                            ),
+                      // 投稿日付
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "${DateFormat('y/M/d').format(postStructure!.dateHeader)} 投稿記事",
+                          style: TextStyle(
+                            fontSize: fontSize.caption,
+                            decoration: TextDecoration.none,
+                            fontWeight: FontWeight.normal,
+                            color: const Color(4294967295),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                postStructure!.entoryTitle, // String titleString
+                // marginは丸文字を目立たせるために少し右より表示
+                const EdgeInsets.only(
+                  right: 4,
+                  left: 24,
+                  top: 8,
+                ),
+                double.infinity, // double width
               ),
               // ２段めとのスペース
               const SizedBox(
@@ -135,6 +115,13 @@ class DisplayEntry {
               ),
               // 詳細説明
               Container(
+                // コラムの大事な部分を囲ったり色を入れたりしてみる
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(
+                      color: Theme.of(context).colorScheme.tertiary,
+                      width: 2.0),
+                ),
                 // height: の指定をしないでTextの大きさのままとする
                 padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                 child: Text(
@@ -165,7 +152,7 @@ class DisplayEntry {
                       width: 16,
                     ),
                     Text(
-                      "関連リンク",
+                      "ニュースソース",
                       style: TextStyle(
                         fontSize: fontSize.subTitle2,
                         fontWeight: FontWeight.bold,

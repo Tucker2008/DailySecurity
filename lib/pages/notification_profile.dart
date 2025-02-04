@@ -1,3 +1,4 @@
+import 'package:cyber_interigence/constant/notifification_constant.dart';
 import 'package:cyber_interigence/repository/initial_preference.dart';
 import 'package:cyber_interigence/repository/preference_manager.dart';
 import 'package:cyber_interigence/repository/push_notification_service.dart';
@@ -11,10 +12,6 @@ import 'package:cyber_interigence/model/preference.dart';
 // この画面はアカウント登録していると、Microsoft他のアップデート情報が
 // 忘れないようにNotification発信されるといった案内ページを置いて、登録・削除の設定
 // をする
-
-const notificationTitle = "プッシュ通知の設定";
-const notificationMessage =
-    "「通知を受け取る」をオンにすると、端末上にアプリから通知が届きます。通知希望の場合は「通知を受け取る」をオンにしてください\n";
 
 class NotificationProfile extends ConsumerWidget {
   NotificationProfile({super.key});
@@ -60,16 +57,7 @@ class NotificationProfile extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    // ノーティフィケーション設定タイトル
-                    Text(
-                      notificationTitle,
-                      style: TextStyle(
-                          fontSize: fontSize.body2,
-                          fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    // 横線を引く
                     Divider(
                       height: 1,
                       thickness: 1,
@@ -80,15 +68,33 @@ class NotificationProfile extends ConsumerWidget {
                     const SizedBox(
                       height: 16,
                     ),
-
-                    // 案内テキスト
+                    // ノーティフィケーション設定タイトル
+                    Text(
+                      notificationTitle,
+                      style: TextStyle(
+                          fontSize: fontSize.headlineH6,
+                          fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    // イメージを入れる
+                    Center(
+                      child: Image.asset(
+                        notificationImagePath,
+                        width: 300,
+                      ),
+                    ),
+                    // 通知設定の案内テキスト
                     Text(
                       notificationMessage,
                       style: TextStyle(
-                        fontSize: fontSize.body2,
+                        fontSize: fontSize.body1,
                       ),
                     ),
-
+                    SizedBox(
+                      height: fontSize.headlineH7,
+                    ),
                     // 切り替えスイッチ
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -96,7 +102,7 @@ class NotificationProfile extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.center, // 縦の配置
                       children: [
                         Text(
-                          "通知を受け取る",
+                          notificationSwitchMsg,
                           style: TextStyle(
                               fontSize: fontSize.button,
                               fontWeight: FontWeight.w700),
@@ -106,19 +112,25 @@ class NotificationProfile extends ConsumerWidget {
                         const Spacer(),
 
                         // 切り替えスイッチ
-                        Switch(
-                          // 初期値はON/OFF
-                          value: statusFlg.notificationState ==
-                              notificationStatAuthorized,
-                          // activeColor: デフォルトのまま
-                          onChanged: (value) {
-                            // 裏返す
-                            switchNotifier.notificationFlip(value);
-                            // if (debugPreference) {
-                            //   debugPrint(
-                            //       "onChanged: notification: $value : ${statusFlg.notificationState} and myPreference = ${PreferenceManager().getPreference().toJson().toString()}");
-                            // }
-                          },
+                        Transform.scale(
+                          scale: sizeConfig.screenWidthTimes,
+                          child: Switch(
+                            // 初期値はON/OFF
+                            value: statusFlg.notificationState ==
+                                notificationStatAuthorized,
+                            // activeColor: デフォルトのまま
+                            onChanged: (value) {
+                              // 裏返す
+                              switchNotifier.notificationFlip(value);
+                              // if (debugPreference) {
+                              //   debugPrint(
+                              //       "onChanged: notification: $value : ${statusFlg.notificationState} and myPreference = ${PreferenceManager().getPreference().toJson().toString()}");
+                              // }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: fontSize.headlineH7,
                         ),
                       ],
                     ),

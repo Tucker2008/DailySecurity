@@ -9,7 +9,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # 1.0.1+2: GooglePlayStore申請版：PDF表示を別ライブラリコールへ変更,Build時のVer13対応（広告定義）
 # 1.0.2+3: その他小さいバグ対応
 # 1.0.3+4: リジェクト対応版
-version: 1.0.3+4
+# 1.0.4+5: 再リジェクト対応版(project: Build5)
+version: 1.0.4+5
 
 environment:
   sdk: '>=3.4.3 <4.0.0'

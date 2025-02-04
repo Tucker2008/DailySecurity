@@ -38,6 +38,18 @@ class CycleManager extends CycleStore {
   // スケジュール原点となる各種実施日データ
   CycleSchedule _cycleSchedule = const CycleSchedule();
 
+  // 単体テストモジュール
+  // void testCycleManager() {
+  //   for (int i = 1; i <= 30; i++) {
+  //     final DateTime setDate =
+  //         DateFormat('yyyy/MM/dd').parseStrict('2025/01/$i');
+  //     debugPrint("testCycleManager: ${setDate.toString()}");
+  //     _setUpdateDate(setDate);
+  //     // シナリオ作成
+  //     makeCycleScenario();
+  //   }
+  // }
+
   // シナリオの決定
   //
   void _makeCycleScenario() {
@@ -47,11 +59,12 @@ class CycleManager extends CycleStore {
     }
 
     // シナリオパターンの取得
+    // デバッグ用のパターンシミュレーション
     //
     final scenario =
         scenarioTable[scenarioTableAdjust - _windowsUpdateDurationDays];
 
-    // デバッグ用のパターンシミュレーション
+    // scenarioTable[15]; // 15: "w" Win update更新のテスト
     // scenarioTable[8]; // 8: "p" パスワード更新のテスト
     // scenarioTable[9]; // 9: "pv" パスワードorウィルス更新のテスト
     // scenarioTable[0]; // 0: "dp" パスワードorバックアップのテスト
@@ -68,9 +81,9 @@ class CycleManager extends CycleStore {
 
     // デバッグ用のパターンシミュレーション
     // _cycleSchedule = _cycleSchedule.copyWith(
-    //   otherDodate: DateFormat('yyyy/MM/dd').parseStrict('2025/01/01'),
-    //   passwordUpdate: DateFormat('yyyy/MM/dd').parseStrict('2025/01/01'),
-    // virusUpdate: DateFormat('yyyy/MM/dd').parseStrict('2025/01/01'),
+    // otherDodate: DateFormat('yyyy/MM/dd').parseStrict('2025/01/01'),
+    // passwordUpdate: DateFormat('yyyy/MM/dd').parseStrict('2025/01/01'),
+    //   virusUpdate: DateFormat('yyyy/MM/dd').parseStrict('2025/01/01'),
     // );
 
     // winupdateの要件
@@ -251,6 +264,11 @@ class CycleManager extends CycleStore {
   // 各フラグの更新日と日付更新処理
   //
   // Windows Update 関連 ----------
+  // Windows updateステータスを返す
+  bool getWindowsUpdateSate() {
+    return _cycleSchedule.winUpdate != null;
+  }
+
   // Windows update日付をテキストで返す
   String getWindowsUpdateDateText() {
     return _dateToString(_cycleSchedule.winUpdate);
@@ -263,6 +281,11 @@ class CycleManager extends CycleStore {
   }
 
   // パスワード更新 関連 ----------
+  // パスワード更新ステータス返す
+  bool getPasswordUpdateState() {
+    return _cycleSchedule.passwordUpdate != null;
+  }
+
   // パスワード更新日付をテキストで返す
   String getPasswordUpdateDateText() {
     return _dateToString(_cycleSchedule.passwordUpdate);
@@ -275,6 +298,11 @@ class CycleManager extends CycleStore {
   }
 
   // パターンファイル更新 関連 ----------
+  // パターンファイル更新ステータスを返す
+  bool getVirusUpdateSate() {
+    return _cycleSchedule.virusUpdate != null;
+  }
+
   // パターンファイル更新日付をテキストで返す
   String getVirusUpdateDateText() {
     return _dateToString(_cycleSchedule.virusUpdate);
@@ -287,6 +315,11 @@ class CycleManager extends CycleStore {
   }
 
   // その他の更新 関連 ----------
+  // その他更新ステータスを返す
+  bool getOtherState() {
+    return _cycleSchedule.otherDodate != null;
+  }
+
   // その他更新日付をテキストで返す
   String getOtherDateText() {
     return _dateToString(_cycleSchedule.otherDodate);

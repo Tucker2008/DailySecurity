@@ -31,7 +31,7 @@ class _CocologContentState extends ConsumerState<CocologContent>
   // Build
   @override
   Widget build(BuildContext context) {
-    // URL引き渡し
+    // URLとRSS引き渡し（ここで取得しないと正常に取得出来ない）
     targetUrl = urlProvider.getUrl();
     // entryを読む(fetch_feed.dart)
     // entryを読む機能をentryProvider登録し、その返り値を取得する
@@ -45,7 +45,7 @@ class _CocologContentState extends ConsumerState<CocologContent>
         const CircularProgressIndicator();
       },
     );
-// 本来はBuild()がコールされて
+    // 本来はBuild()がコールされるのでここでトラップする
     if (postStructure == null) {
       return splashScreen(context);
     }

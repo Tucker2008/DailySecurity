@@ -126,12 +126,12 @@ class BookmarkPage extends ConsumerWidget {
                           ? Icon(
                               postCategoryIcon(
                                   informationList[index].category!),
-                              size: 24 * (sizeConfig.screenWidthTimes!),
+                              size: 32 * (sizeConfig.screenWidthTimes!),
                             )
                           : CircleAvatar(
                               backgroundImage: postCategotyImageicon(
                                   informationList[index].category!),
-                              radius: 12.0 *
+                              radius: 16.0 *
                                   (sizeConfig.screenWidthTimes!), //ここは半径を指定する
                             ))
                       : null,

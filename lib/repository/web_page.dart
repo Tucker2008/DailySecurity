@@ -75,10 +75,8 @@ class _WebPageState extends ConsumerState<WebPage> {
     // Buildが複数回呼ばれるのでここで防ぐ（きれいな実装になってない）
     if (_isFirst) {
       _isFirst = false;
-      // 指定URLを取得して
-      final url = UrlProvider().getUrl();
-      // debugPrint("_WebPageState build $url");
-      controller.loadRequest(Uri.parse(url));
+      // 指定URLを取得してコントローラを生成
+      controller.loadRequest(Uri.parse(UrlProvider().getUrl()));
       // 指定コンテナを受領
       setDividerContainer(WidgetProvider().getWidget());
     }

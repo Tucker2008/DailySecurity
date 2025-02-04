@@ -9,10 +9,13 @@ class FontSize {
   factory FontSize() {
     return _instance;
   }
+  // initの多重化防止
+  static bool _initOnce = false;
 
   double headLineH4 = 34.0;
   double headlineH5 = 24.0;
   double headlineH6 = 20.0;
+  double headlineH7 = 18.0;
   double subTitle1 = 16.0;
   double subTitle2 = 14.0;
   double body1 = 16.0;
@@ -24,10 +27,17 @@ class FontSize {
 
   // iPadなどの画面サイズ差を埋めるためのフォントサイズ設定
   void init(double times) {
+    // リロードで再計算するのを防ぐ
+    if (_initOnce) {
+      return;
+    } else {
+      _initOnce = !_initOnce;
+    }
     if (times > 1.0) {
       headLineH4 *= times;
       headlineH5 *= times;
       headlineH6 *= times;
+      headlineH7 *= times;
       subTitle1 *= times;
       subTitle2 *= times;
       body1 *= times;

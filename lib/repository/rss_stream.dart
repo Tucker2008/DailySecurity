@@ -4,7 +4,7 @@ import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/cache_manager.dart';
 import 'package:cyber_interigence/repository/preference_manager.dart';
-import 'package:cyber_interigence/util/post_category.dart';
+import 'package:cyber_interigence/util/url_provider.dart';
 // import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart' show DateFormat;
@@ -18,6 +18,7 @@ List<RssInformation> margeList = [];
 
 List<RssInformation>? meargeNews(int max) {
   List<RssInformation> margedList = [];
+  List<RssInformation> tmpList = [];
 
   // すでにリストがあるならそのまま使う
   if (margeList.isEmpty) {
@@ -27,21 +28,24 @@ List<RssInformation>? meargeNews(int max) {
     }
 
     // キャッシュから読み込んでマージする
+    tmpList = CacheManager().getRssCache(ipaRss)!;
     // 何故かforEach文が使えない
-    for (var element in CacheManager().getRssCache(ipaRss)!) {
-      margeList.add(element.copyWith(category: ipaCategory));
+    for (var element in tmpList) {
+      margeList.add( element.copyWith(category: "ipa"));
     }
 
-    if (!CacheManager().getRssCacheIsEmpty(jvnRss)) {
-      for (var element in CacheManager().getRssCache(jvnRss)!) {
-        margeList.add(element.copyWith(category: jvnCategory));
-      }
+    tmpList = CacheManager().getRssCache(jvnRss)!;
+    for (var element in tmpList) {
+      margeList.add(  element.copyWith(category: "jvn"));
     }
 
-    if (!CacheManager().getRssCacheIsEmpty(jpcertRss)) {
-      for (var element in CacheManager().getRssCache(jpcertRss)!) {
-        margeList.add(element.copyWith(category: jcrCategory));
-      }
+    tmpList = CacheManager().getRssCache(jpcertRss)!;
+    for (var element in tmpList) {
+      // JPCERTはURLのモバイル変換が必要
+      margeList.add( element.copyWith(
+        category: "jcr",
+        link: UrlProvider().jpcertUrl(element.link!),
+      ));
     }
 
     // マージしたリストを時系列にソートする
@@ -83,9 +87,22 @@ List<RssInformation>? filteringList(
   return processedList;
 }
 
+// ※構造変更により不要となった
+// allRssStreaming()で全てをキャッシュする
+//
+// 最初にキャッシュにロードしておく
+// RSSを読んでそれをRSSInformationのLISTに変換してキャッシュしておく
+// computeでスレッドを起こそうとしたがうまくキャッシュされない
+// cocologRssはメイン画面のロードが始まるのでここではキャッシュしない
+//
+// Future<void> initialLoadCache() async {
+// await rssStreaming(ipaRss);
+// await rssStreaming(jvnRss);
+// await rssStreaming(jpcertRss);
+// }
+
 //
 // 必要な全てのRSSを読んで、cocologのRSSInformationを返す
-// 時間はかかるがキャッシュに入れておける
 //
 Future<List<RssInformation>> allRssStreaming(String url) async {
   await rssStreaming(ipaRss);
@@ -95,8 +112,7 @@ Future<List<RssInformation>> allRssStreaming(String url) async {
 }
 
 //
-// News系のRSSを読む
-// allRssStreaming()のサブセット
+// 必要な全てのニュース系RSSを読む
 //
 Future<List<RssInformation>> allNewsRssStreaming(String url) async {
   await rssStreaming(ipaRss);
@@ -155,13 +171,20 @@ Future<List<RssInformation>> rssStreaming(String url) async {
     // LastLoginから規定(30日)以内で、規定内件数以内である
     DateTime postDate = item.dc?.date as DateTime;
 
+    // if (debugRssFeed) {
+    //   debugPrint(
+    //       "informationList.add: ${lastLogin.difference(postDate).inDays} : $feedCounter");
+    // }
+
     if ((lastLogin.difference(postDate).inDays > maxFeedDuration) ||
         (feedCounter > minFeedCount)) {
       break;
     }
     feedCounter++;
 
-  //   デバッグ確認
+    // debugPrint(
+    //     "duration: ${lastLogin.difference(postDate).inDays},counter $feedCounter");
+
     // if (debugRssFeed) {
     //   debugPrint("item author: ${item.author}");
     //   debugPrint("item categories: ${item.categories?.toList().toString()}");
@@ -179,7 +202,7 @@ Future<List<RssInformation>> rssStreaming(String url) async {
     //   debugPrint("item enclosure: ${item.enclosure.toString()}");
     // }
   }
-
+  //   デバッグ確認
   // if (debugRssFeed || debugCache) {
   //   debugPrint("title: ${feed.title}");
   //   debugPrint("description: ${feed.description}");

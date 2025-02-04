@@ -10,6 +10,7 @@ import 'package:cyber_interigence/util/bookmark_provider.dart';
 import 'package:cyber_interigence/util/color_provider.dart';
 import 'package:cyber_interigence/util/note_provider.dart';
 import 'package:cyber_interigence/util/post_category.dart';
+import 'package:cyber_interigence/util/url_provider.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,8 +26,8 @@ class NewsMainPage extends ConsumerWidget {
     String origin = Uri.parse(original).origin.trim();
 
     if (origin == jpcertStartURL) {
-      String inner = Uri.parse(original).path;
-      return Uri.parse("$origin/m$inner").toString();
+      // 変換ロジックはUrlProviderへ集約
+      return UrlProvider().jpcertUrl(original);
     } else {
       return original;
     }
@@ -166,7 +167,7 @@ class NewsMainPage extends ConsumerWidget {
                               : CircleAvatar(
                                   backgroundImage: postCategotyImageicon(
                                       informationList[index].category!),
-                                  radius: 12.0 *
+                                  radius: 16.0 *
                                       (sizeConfig
                                           .screenWidthTimes!), //ここは半径を指定する
                                 ))

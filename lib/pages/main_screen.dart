@@ -1,13 +1,16 @@
 import 'package:cyber_interigence/constant/feed_constant.dart';
+import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/pages/bookmark_page.dart';
-import 'package:cyber_interigence/pages/entrance_screen.dart';
+import 'package:cyber_interigence/pages/cocolog_page.dart';
+import 'package:cyber_interigence/pages/cycle_screen.dart';
 import 'package:cyber_interigence/pages/news_main_page.dart';
 import 'package:cyber_interigence/pages/setting_screen.dart';
+import 'package:cyber_interigence/pages/entrance_screen.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
+import 'package:cyber_interigence/util/post_category.dart';
+import 'package:cyber_interigence/util/screen_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cyber_interigence/global.dart';
-import 'package:cyber_interigence/pages/cycle_screen.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -18,23 +21,25 @@ class MainScreen extends ConsumerStatefulWidget {
 
 class _MainScreenState extends ConsumerState<MainScreen> {
   // メニューによるスクリーンの定義
+  // 注意：この配列順は screen_provider.dart と番号が連携している
   static final _screens = [
     EntranceScreen(),
+    CocologPage(argCategory: columnCategory),
+    CycleScreen(),
     NewsMainPage(
       arg: false,
     ),
-    const CycleScreen(appbar: false),
     BookmarkPage(),
-    const SettingScreen(),
   ];
 
   // 選択されたスクリーン番号
-  int _selectedIndex = 0;
+  int _selectedIndex = ScreenProvider().getScreen();
 
   // タップされたアイテム番号を選択スクリーン番号へセット
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      ScreenProvider().resetScreen();
     });
   }
 
@@ -46,105 +51,150 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     return Scaffold(
       // AppBar ロゴを表示するだけ ----------------
       appBar: AppbarConstant().getAppbarConstant(),
-
+      // 設定ページはDrawerへ格納
+      drawer: settingsDrawer(context),
       // ボディ本体はメニュー選択機能
       body: _screens[_selectedIndex],
-      // ボトムのナビゲーションバー
+
+      // ボトムのナビゲーションバー(関数分離は無理)
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
           indicatorColor: Theme.of(context).colorScheme.tertiary,
+          backgroundColor:
+              Theme.of(context).colorScheme.surfaceBright, //surfaceDim,
           labelTextStyle: WidgetStateProperty.all(
             TextStyle(
-              fontSize: fontSize.menu * (sizeConfig.screenWidthTimes!),
+              fontSize: fontSize.menu,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           // これが中央アイコンとのバランスが良い反転方法
           indicatorShape: const CircleBorder(),
-          // ------
         ),
         child: NavigationBar(
-          backgroundColor: Theme.of(context).colorScheme.surfaceDim,
-          shadowColor: Theme.of(context).colorScheme.primary,
           animationDuration: const Duration(seconds: 1),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          height: 52 * (sizeConfig.screenWidthTimes!), //NewsPicsベンチマーク値
+          height: sizeConfig.mainMenuHeight,
           selectedIndex: _selectedIndex,
           onDestinationSelected: _onItemTapped,
           destinations: <NavigationDestination>[
             NavigationDestination(
-              icon: Icon(
-                Icons.home,
-                size: 24 * (sizeConfig.screenWidthTimes!),
+              icon: CircleAvatar(
+                radius: sizeConfig.mainMenuIconRadius,
+                backgroundColor: Theme.of(context).colorScheme.surfaceBright,
+                child: Icon(
+                  Icons.home_outlined,
+                  size: sizeConfig.mainMenuIconSize,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
               ),
               label: mainMenuHome,
               tooltip: '$cocologTitle1 $cocologTitle2',
-            ),
-            NavigationDestination(
-              icon: Icon(
-                Icons.newspaper,
-                size: 24 * (sizeConfig.screenWidthTimes!),
+              selectedIcon: CircleAvatar(
+                radius: sizeConfig.mainMenuSelectedIconRadius,
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                child: Icon(
+                  Icons.home_outlined,
+                  size: sizeConfig.mainMenuIconSize,
+                  color: Theme.of(context).colorScheme.surfaceBright,
+                ),
               ),
-              label: mainMenuNews,
-              tooltip: newsFeedTitle,
             ),
             NavigationDestination(
               icon: CircleAvatar(
-                radius: 22 * (sizeConfig.screenWidthTimes!),
+                radius: sizeConfig.mainMenuIconRadius,
+                backgroundColor: Theme.of(context).colorScheme.surfaceBright,
+                child: Icon(
+                  Icons.article_outlined,
+                  size: sizeConfig.mainMenuIconSize,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
+              ),
+              label: mainMenuArticle,
+              tooltip: newsArticleTitle,
+              selectedIcon: CircleAvatar(
+                radius: sizeConfig.mainMenuSelectedIconRadius,
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                child: Icon(
+                  Icons.article_outlined,
+                  size: sizeConfig.mainMenuIconSize,
+                  color: Theme.of(context).colorScheme.surfaceBright,
+                ),
+              ),
+            ),
+            NavigationDestination(
+              icon: CircleAvatar(
+                radius: sizeConfig.mainMenuIconRadius + 2,
                 child: CircleAvatar(
-                  radius: 20 * (sizeConfig.screenWidthTimes!),
-                  backgroundColor: Theme.of(context).colorScheme.surfaceDim,
+                  radius: sizeConfig.mainMenuIconRadius,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceBright,
                   child: Icon(
                     Icons.calendar_month,
-                    size: 24 * (sizeConfig.screenWidthTimes!),
+                    size: sizeConfig.mainMenuIconSize,
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
                 ),
               ),
               selectedIcon: CircleAvatar(
-                radius: 22 * (sizeConfig.screenWidthTimes!),
+                radius: sizeConfig.mainMenuSelectedIconRadius,
                 child: CircleAvatar(
-                  radius: 20 * (sizeConfig.screenWidthTimes!),
+                  radius: sizeConfig.mainMenuSelectedIconRadius - 2,
                   backgroundColor: Theme.of(context).colorScheme.tertiary,
                   child: Icon(
                     Icons.calendar_month,
-                    size: 24 * (sizeConfig.screenWidthTimes!),
-                    color: Theme.of(context).colorScheme.surfaceDim,
+                    size: sizeConfig.mainMenuIconSize,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .surfaceBright, //surfaceDim,
                   ),
                 ),
               ),
-              label: mainMenuRiminder,
-              tooltip: entranceTitleReminder,
+              label: mainMenuReminder,
+              tooltip: reminderTitle,
             ),
             NavigationDestination(
-              icon: Icon(
-                Icons.bookmark,
-                size: 24 * (sizeConfig.screenWidthTimes!),
-                color: Theme.of(context).colorScheme.tertiary,
+              icon: CircleAvatar(
+                radius: sizeConfig.mainMenuIconRadius,
+                backgroundColor: Theme.of(context).colorScheme.surfaceBright,
+                child: Icon(
+                  Icons.newspaper,
+                  size: sizeConfig.mainMenuIconSize,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
+              ),
+              label: mainMenuNews,
+              tooltip: newsFeedTitle,
+              selectedIcon: CircleAvatar(
+                radius: sizeConfig.mainMenuSelectedIconRadius,
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                child: Icon(
+                  Icons.newspaper,
+                  size: sizeConfig.mainMenuIconSize,
+                  color: Theme.of(context).colorScheme.surfaceBright,
+                ),
+              ),
+            ),
+            NavigationDestination(
+              icon: CircleAvatar(
+                radius: sizeConfig.mainMenuIconRadius,
+                backgroundColor: Theme.of(context).colorScheme.surfaceBright,
+                child: Icon(
+                  Icons.bookmark_outline,
+                  size: sizeConfig.mainMenuIconSize,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
               ),
               label: mainMenuBookmark,
               tooltip: bookmarkTitle,
-              // 何故かここは指定しないと反転しない
-              selectedIcon: Icon(
-                Icons.bookmark,
-                size: 24 * (sizeConfig.screenWidthTimes!),
-                color: Theme.of(context).colorScheme.surfaceDim,
-              ),
-            ),
-            NavigationDestination(
-              icon: Icon(
-                Icons.settings,
-                size: 24 * (sizeConfig.screenWidthTimes!),
-                color: Theme.of(context).colorScheme.tertiary,
-              ),
-              label: mainMenuSetting,
-              tooltip: newsSettingTitle,
-              // 何故かここは指定しないと反転しない
-              selectedIcon: Icon(
-                Icons.settings,
-                size: 24 * (sizeConfig.screenWidthTimes!),
-                color: Theme.of(context).colorScheme.surfaceDim,
+              selectedIcon: CircleAvatar(
+                radius: sizeConfig.mainMenuSelectedIconRadius,
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                child: Icon(
+                  Icons.bookmark_outline,
+                  size: sizeConfig.mainMenuIconSize,
+                  color: Theme.of(context).colorScheme.surfaceBright,
+                ),
               ),
             ),
           ],

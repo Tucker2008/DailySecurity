@@ -9,6 +9,9 @@ import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/pages/main_screen.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
+//
+// アプリ開始直後に１回だけ表示される紹介
+//
 class OnBoardingPage extends StatefulWidget {
   const OnBoardingPage({super.key});
 
@@ -46,9 +49,9 @@ class OnBoardingPageState extends State<OnBoardingPage> {
   Widget build(BuildContext context) {
     // イントロ画面の表示詳細設定
     TextStyle bodyStyle = TextStyle(
-      fontSize: fontSize.headlineH6,
-      height: 1.3, //行間指定(これをしないとiOSで切れる)
+      fontSize: fontSize.headlineH7,
       color: Theme.of(context).colorScheme.onSurfaceVariant,
+      fontWeight: FontWeight.w600,
     );
     PageDecoration pageDecoration = PageDecoration(
       titleTextStyle: TextStyle(
@@ -60,9 +63,10 @@ class OnBoardingPageState extends State<OnBoardingPage> {
       bodyPadding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
       pageColor: Theme.of(context).colorScheme.surfaceDim, //色調整必要
       imagePadding: EdgeInsets.zero,
-      contentMargin: const EdgeInsets.symmetric(horizontal: 16),
+      contentMargin: const EdgeInsets.all(16.0),
+      // 本文を2,イメージを1に設定（イメージは小さくとも良い）
       bodyFlex: 2,
-      imageFlex: 3,
+      imageFlex: 1,
     );
 
     // IntroductionScreen
@@ -81,17 +85,15 @@ class OnBoardingPageState extends State<OnBoardingPage> {
 
         // 各ページのコンテンツ内容
         pages: [
-          // １ページ目
+          // １ページ目：このアプリの目的
           PageViewModel(
             titleWidget: Container(
               padding: const EdgeInsets.only(left: 16.0),
               alignment: Alignment.centerLeft,
               child: Text(
                 title1st,
-                style: TextStyle(
-                  fontSize: fontSize.headlineH5,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                style: bodyStyle.copyWith(
+                  fontSize: fontSize.headlineH6,
                 ),
               ),
             ),
@@ -105,41 +107,16 @@ class OnBoardingPageState extends State<OnBoardingPage> {
             image: _buildImage(image1st),
             decoration: pageDecoration,
           ),
-          // ２ページ目
-          PageViewModel(
-            titleWidget: Container(
-              padding: const EdgeInsets.only(left: 16.0),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                title2nd,
-                style: TextStyle(
-                  fontSize: fontSize.headlineH5,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-            bodyWidget: Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                body2nd,
-                style: bodyStyle,
-              ),
-            ),
-            image: _buildImage(image2nd),
-            decoration: pageDecoration,
-          ),
-          // ３ページ目
+
+          // ２ページ目：コンテンツやニュースについて
           PageViewModel(
             titleWidget: Container(
               padding: const EdgeInsets.only(left: 16.0),
               alignment: Alignment.centerLeft,
               child: Text(
                 title3rd,
-                style: TextStyle(
-                  fontSize: fontSize.headlineH5,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                style: bodyStyle.copyWith(
+                  fontSize: fontSize.headlineH6,
                 ),
               ),
             ),
@@ -155,9 +132,6 @@ class OnBoardingPageState extends State<OnBoardingPage> {
           ),
         ],
         onDone: () => _onIntroEnd(context),
-        onSkip: () => _onIntroEnd(context), // You can override onSkip callback
-        // showSkipButton と showBackButton は２択（両方trueは例外発生）
-        showSkipButton: false,
         skipOrBackFlex: 0,
         nextFlex: 0,
         showBackButton: true,
@@ -165,30 +139,25 @@ class OnBoardingPageState extends State<OnBoardingPage> {
         back: Icon(
           Icons.arrow_back,
           color: Theme.of(context).colorScheme.onTertiaryFixed,
-          size: 24 * (sizeConfig.screenWidthTimes!),
+          size: sizeConfig.mainMenuIconSize,
         ),
-        skip: Text(skipTxt,
-            style: TextStyle(
-              fontSize: fontSize.body1,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onTertiaryFixed,
-            )),
         next: Icon(
           Icons.arrow_forward,
           color: Theme.of(context).colorScheme.onTertiaryFixed,
-          size: 24 * (sizeConfig.screenWidthTimes!),
+          size: sizeConfig.mainMenuIconSize,
         ),
         done: Text(completeTxt,
             style: TextStyle(
-              fontSize: fontSize.body1,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onTertiaryFixed,
+              fontSize: fontSize.headlineH7,
             )),
         curve: Curves.fastLinearToSlowEaseIn,
         controlsMargin: const EdgeInsets.all(16),
         controlsPadding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
         dotsDecorator: DotsDecorator(
-          size: const Size(10.0, 10.0),
+          size: Size(10.0 * sizeConfig.screenWidthTimes!,
+              10.0 * sizeConfig.screenWidthTimes!),
           color: Theme.of(context)
               .colorScheme
               .onTertiaryFixed, //Color(0xFFBDBDBD),
@@ -204,6 +173,15 @@ class OnBoardingPageState extends State<OnBoardingPage> {
             borderRadius: BorderRadius.all(Radius.circular(8.0)),
           ),
         ),
+        // スキップボタンは設定しない（バックボタンと１択のため）
+        showSkipButton: false,
+        // onSkip: () => _onIntroEnd(context), // ↓事情で onSkip callbackはナシ
+        // showSkipButton と showBackButton は２択（両方trueは例外発生）
+        // skip: Text(skipTxt,
+        //     style: TextStyle(
+        //       fontWeight: FontWeight.w600,
+        //       color: Theme.of(context).colorScheme.onTertiaryFixed,
+        //     )),
       ),
     );
   }
