@@ -14,6 +14,10 @@ import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cyber_interigence/global.dart';
 
+// RSSで取得したデータを格納する(rss_infomation.dart)
+// データ元はCacheManager
+List<RssInformation> informationList = [];
+
 //
 // ココログのRSS記事一覧画面
 //
@@ -28,11 +32,14 @@ class CocologPage extends ConsumerWidget {
     return rssStreaming(cocologRss);
   });
 
+  // 取得したリストにブックマークされているかフラグを付ける
+  int _addBookmark2InfomationList() {
+    informationList = BookmarkManager().bookmarkedList(informationList);
+    return informationList.length;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // RSSで取得したデータを格納する(rss_infomation.dart)
-    // データ元はCacheManager
-    List<RssInformation> informationList = [];
     // エラーメッセージ伝達用
     final noteProvider = NoteProvider();
     // Webページ用のコンテナ初期化
@@ -58,18 +65,11 @@ class CocologPage extends ConsumerWidget {
     // IPA等のニュースマージが間に合わない場合にはぐるぐるを出す
     if (informationList.isEmpty) {
       return splashScreen(context);
-    } else {
-      // 取得したリストにブックマークされているかフラグを付ける
-      informationList = BookmarkManager().bookmarkedList(informationList);
     }
 
-    // BookMarkProviderを定義
-    final bookmarkProvider =
-        StateNotifierProvider<BookmarkNotifier, int>((ref) {
-      return BookmarkNotifier();
-    });
-    ref.watch(bookmarkProvider);
-    BookmarkNotifier bookmarkNotifier = ref.read(bookmarkProvider.notifier);
+    // Bookmark Providerのwatchを定義
+    final bookmarkMap = ref.watch(bookmarkProvider);
+    bookmarkNotifier = ref.read(bookmarkProvider.notifier);
 
     return Scaffold(
         // AppBar Build5で表示方法変更のためappbarを表示しない
@@ -84,7 +84,8 @@ class CocologPage extends ConsumerWidget {
           // 記事一覧のRSS表示本体
           //
           ListView.builder(
-            itemCount: informationList.length,
+            // 取得したリストにブックマークされているかフラグを付ける
+            itemCount: _addBookmark2InfomationList(),
 
             scrollDirection: Axis.vertical, // スクロール方向を垂直に設定
             reverse: false, // 順序を逆にしない
@@ -112,17 +113,29 @@ class CocologPage extends ConsumerWidget {
                     bottom: BorderSide(
                         color:
                             Theme.of(context).colorScheme.secondaryContainer),
-                    // top: BorderSide(
-                    //     color:
-                    //         Theme.of(context).colorScheme.secondaryContainer),
+                    // top: は入れない
                   ),
                 ),
                 child: ListTile(
                   // ヘッダ：日付
-                  subtitle: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(informationList[index].date),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(informationList[index].date),
+                      SizedBox(
+                        width: fontSize.subTitle2,
+                      ),
+                      // Bookmarkマークは日付の前に移動(2025.2.12)
+                      bookmarkMap.containsKey(informationList[index].link!)
+                          ? Icon(Icons.bookmark,
+                              size: fontSize.subTitle1,
+                              color: Theme.of(context).colorScheme.primary)
+                          : SizedBox(
+                              width: fontSize.subTitle1,
+                            ),
+                    ],
                   ),
+
                   subtitleTextStyle: TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: fontSize.subTitle2,
@@ -145,7 +158,7 @@ class CocologPage extends ConsumerWidget {
                   // タップされた時に記事を表示
                   onTap: () {
                     // ページ表示
-                    launchURL(context, informationList[index].link!);
+                    launchUrlByRss(context, informationList[index]);
                   },
                   textColor: Theme.of(context).colorScheme.onSurface,
                   // カテゴリ毎のアイコン
@@ -165,19 +178,7 @@ class CocologPage extends ConsumerWidget {
                               radius: 12.0, //ここは半径を指定する
                             ))
                       : null,
-                  // 記事右のブックマークアイコン
-                  trailing: GestureDetector(
-                    onTap: () {
-                      bookmarkNotifier.flipBookmark(informationList[index]);
-                    },
-                    child: informationList[index].bookmarked
-                        ? Icon(Icons.bookmark,
-                            size: 24,
-                            color: Theme.of(context).colorScheme.primary)
-                        : Icon(Icons.bookmark_outline,
-                            size: 24,
-                            color: Theme.of(context).colorScheme.primary),
-                  ),
+                  // 記事右のBookmarkマークは日付の前に移動(2025.2.12)
                 ),
               );
             },

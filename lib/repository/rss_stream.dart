@@ -87,20 +87,6 @@ List<RssInformation>? filteringList(
   return processedList;
 }
 
-// ※構造変更により不要となった
-// allRssStreaming()で全てをキャッシュする
-//
-// 最初にキャッシュにロードしておく
-// RSSを読んでそれをRSSInformationのLISTに変換してキャッシュしておく
-// computeでスレッドを起こそうとしたがうまくキャッシュされない
-// cocologRssはメイン画面のロードが始まるのでここではキャッシュしない
-//
-// Future<void> initialLoadCache() async {
-// await rssStreaming(ipaRss);
-// await rssStreaming(jvnRss);
-// await rssStreaming(jpcertRss);
-// }
-
 //
 // 必要な全てのRSSを読んで、cocologのRSSInformationを返す
 //
@@ -153,8 +139,6 @@ Future<List<RssInformation>> rssStreaming(String url) async {
     // }
     throw Exception('Failed to fetch RSS');
   }
-
-  // debugPrint("rssStreaming.statusCode: $url ${response.statusCode}");
 
   //   取得したRSS/XMLをParseにかけて分解
   var feed = RssFeed.parse(utf8.decode(response.bodyBytes));

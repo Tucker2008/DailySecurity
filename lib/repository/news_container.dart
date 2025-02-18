@@ -36,10 +36,9 @@ Widget newsContainer(
       double.infinity,
       null,
       context,
-      item.title,
-      null,
+      item,
+      null,null,
       postCategotyImageicon(item.category!),
-      item.link!,
     ));
   }
 
@@ -103,9 +102,9 @@ Widget newsContainer(
               const Spacer(),
               // ブックマークへ誘導
               GestureDetector(
-                child: const Icon(
+                child: Icon(
                   Icons.bookmark_outline,
-                  size: 32,
+                  size: sizeConfig.tileIconSize,
                 ),
                 onTap: () {
                   // スクリーン番号をセットして

@@ -1,5 +1,6 @@
+import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
-import 'package:cyber_interigence/util/url_provider.dart';
+import 'package:cyber_interigence/util/bookmark_provider.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +11,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // アプリ内でWebページを表示する
 //
 class WebPage extends ConsumerStatefulWidget {
-  const WebPage({super.key});
+  const WebPage({super.key, required this.rss});
+
+  final RssInformation rss;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _WebPageState();
 }
 
 class _WebPageState extends ConsumerState<WebPage> {
+  RssInformation? rss;
+  String url = "";
   double _progress = 0.0;
   bool _isFirst = true;
   bool _isLoading = false;
@@ -74,15 +79,25 @@ class _WebPageState extends ConsumerState<WebPage> {
   Widget build(BuildContext context) {
     // Buildが複数回呼ばれるのでここで防ぐ（きれいな実装になってない）
     if (_isFirst) {
+      // 初回フラグを下ろす
       _isFirst = false;
-      // 指定URLを取得してコントローラを生成
-      controller.loadRequest(Uri.parse(UrlProvider().getUrl()));
+      // 引数のRSSを取り出す
+      rss = widget.rss;
+      // 指定URLを取得
+      url = widget.rss.link!;
+      // URLをコントローラに設定
+      controller.loadRequest(Uri.parse(url));
       // 指定コンテナを受領
       setDividerContainer(WidgetProvider().getWidget());
+
+      // BookMarkProviderにWatch定義
+      // Map<String, RssInformation> bookmarkMap = ref.watch(bookmarkProvider);
+      ref.watch(bookmarkProvider);
+      bookmarkNotifier = ref.read(bookmarkProvider.notifier);
     }
 
     return Scaffold(
-      appBar: AppbarConstant().getAppbarConstant(),
+      appBar: AppbarConstant().getBookmarkedAppbarConstant(url, rss!, ref),
       // body WebPage
       body: SafeArea(
         child: Column(

@@ -9,15 +9,19 @@ class NoteProvider {
     return _instance;
   }
 
-  String noteMsg = "";
+  String _noteMsg = "";
 
   String getNote() {
-    final retMsg = noteMsg;
-    noteMsg = "";
+    final retMsg = _noteMsg;
+    _noteMsg = "";
     return retMsg;
   }
 
   void setNote(String notice) {
-    noteMsg = notice;
+    _noteMsg = notice;
+  }
+
+  bool getStatus() {
+    return _noteMsg.isNotEmpty;
   }
 }

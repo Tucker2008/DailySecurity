@@ -12,7 +12,7 @@ Widget slideTileContainer(BuildContext context, List<RssInformation> info) {
   // 表示するタイル（コンテンツ）を準備
   List<Widget> tiles = [];
   for (var item in info) {
-    tiles.add(tileContainer(context, item.title, item.link!));
+    tiles.add(tileContainer(context, item ));
   }
 
   // タイルを横並びにする（外枠込の）コンテナ

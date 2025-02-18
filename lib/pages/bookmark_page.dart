@@ -19,34 +19,25 @@ class BookmarkPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Webページ用のコンテナ初期化
+    WidgetProvider().removeWidget();
+
+    // Bookmark Providerのwatchを定義
+    Map<String, RssInformation> bookmarkMap = ref.watch(bookmarkProvider);
+    bookmarkNotifier = ref.read(bookmarkProvider.notifier);
+
     // RSSで取得したデータを格納する(rss_infomation.dart)
     // データ元はCacheManager
     List<RssInformation> informationList =
         BookmarkManager().bookmarkStreaming();
-
-    // Webページ用のコンテナ初期化
-    WidgetProvider().removeWidget();
-
-    // BookMarkProviderを定義
-    final bookmarkProvider =
-        StateNotifierProvider<BookmarkNotifier, int>((ref) {
-      return BookmarkNotifier();
-    });
-    ref.watch(bookmarkProvider);
-    BookmarkNotifier bookmarkNotifier = ref.read(bookmarkProvider.notifier);
 
     // ブックマークリストがなければ利用方法を表示して終わり
     if (!BookmarkManager().isNotEmpty()) {
       return bookmarkIsEmptyContainer;
     }
 
-    // 取得したリストにブックマークされているかフラグを付ける
-    informationList = BookmarkManager().bookmarkedList(informationList);
-
     return Scaffold(
         // AppBar ロゴはmainMenuで表示されている ----------------
-        // appBar: AppbarConstant().getAppbarConstant(),
-
         // コンテンツ内容一覧 ----------------
         body: SingleChildScrollView(
       child: Column(
@@ -85,17 +76,29 @@ class BookmarkPage extends ConsumerWidget {
                     bottom: BorderSide(
                         color:
                             Theme.of(context).colorScheme.secondaryContainer),
-                    top: BorderSide(
-                        color:
-                            Theme.of(context).colorScheme.secondaryContainer),
+                    // top: は入れない
                   ),
                 ),
                 child: ListTile(
                   // ヘッダ：日付
-                  subtitle: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(informationList[index].date),
+                  // 記事右のBookmarkマークは日付の前に移動(2025.2.12)
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(informationList[index].date),
+                      SizedBox(
+                        width: fontSize.subTitle2,
+                      ),
+                      bookmarkMap.containsKey(informationList[index].link!)
+                          ? Icon(Icons.bookmark,
+                              size: fontSize.subTitle1,
+                              color: Theme.of(context).colorScheme.primary)
+                          : SizedBox(
+                              width: fontSize.subTitle1,
+                            ),
+                    ],
                   ),
+
                   subtitleTextStyle: TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: fontSize.subTitle2,
@@ -115,8 +118,10 @@ class BookmarkPage extends ConsumerWidget {
                     // 行間を少し狭く
                     height: 1.2,
                   ),
-                  onTap: () =>
-                      {launchURL(context, informationList[index].link!)},
+                  onTap: () {
+                    // ページ表示
+                    launchUrlByRss(context, informationList[index]);
+                  },
                   textColor: Theme.of(context).colorScheme.onSurface,
                   // カテゴリ毎のアイコン
                   // カテゴリ指定がない場合だけにアイコンを表示する
@@ -135,22 +140,7 @@ class BookmarkPage extends ConsumerWidget {
                                   (sizeConfig.screenWidthTimes!), //ここは半径を指定する
                             ))
                       : null,
-                  // 記事右のブックマークアイコン
-                  trailing: GestureDetector(
-                    onTap: () {
-                      if (bookmarkNotifier
-                          .flipBookmark(informationList[index])) {
-                        informationList.removeAt(index);
-                      }
-                    },
-                    child: informationList[index].bookmarked
-                        ? Icon(Icons.bookmark,
-                            size: 24,
-                            color: Theme.of(context).colorScheme.primary)
-                        : Icon(Icons.bookmark_outline,
-                            size: 24,
-                            color: Theme.of(context).colorScheme.primary),
-                  ),
+                  // 記事右のBookmarkマークは日付の前に移動(2025.2.12)
                 ),
               );
             },

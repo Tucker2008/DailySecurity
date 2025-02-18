@@ -13,6 +13,8 @@ class BookmarkManager extends BookmarkStore {
   }
 
   //Bookmark本体
+  // String: URL
+  // RssInformation: RSS情報
   Map<String, RssInformation> _bookmarks = {};
 
   RssInformation? getBookmarkedRssInformation(String url) {
@@ -37,7 +39,7 @@ class BookmarkManager extends BookmarkStore {
   // ブックマークの追加
   void addBookmark(String url, RssInformation info) {
     if (!getBookmarkState(url)) {
-      _bookmarks[url] = info;
+      _bookmarks[url] = info.copyWith(bookmarked: true);
       saveBookmarks();
     }
   }
@@ -99,5 +101,13 @@ class BookmarkManager extends BookmarkStore {
   void deleteBookmarks() {
     _bookmarks = {};
     super.removeBookmark();
+  }
+
+  //
+  // BookmarkProvider
+  // ブックマーク設定を監視するStateNotifier
+  //
+  Map<String, RssInformation> getBookmarkedMap() {
+    return _bookmarks;
   }
 }

@@ -3,6 +3,8 @@ import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/pages/notification_profile.dart';
 import 'package:cyber_interigence/repository/launch_url.dart';
+import 'package:cyber_interigence/repository/preference_manager.dart';
+import 'package:cyber_interigence/repository/push_notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -16,7 +18,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 /// 表示用のアプリバージョンテキストを返却します。
 Future<String> getVersionInfo() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  var text = '${packageInfo.version}(${packageInfo.buildNumber})';
+  var text =
+      '$settingsVerTitle:${packageInfo.version}(${packageInfo.buildNumber})';
   return text;
 }
 
@@ -26,13 +29,8 @@ Future<String> getVersionInfo() async {
 // Widget build(BuildContext context, WidgetRef ref) {
 //   return Scaffold(
 // body: Column(
-Widget settingsDrawer(BuildContext context) {
-  // return Drawer(
-  return Container(
-    width: sizeConfig.drawerWidth,
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.surfaceDim,
-    ),
+Drawer settingsDrawer(BuildContext context) {
+  return Drawer(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +146,7 @@ Widget settingsDrawer(BuildContext context) {
               width: 16,
             ),
             Text(
-              "$settingsVerTitle:",
+              settingsVerTitle,
               style: TextStyle(
                 fontSize: fontSize.body1,
               ),
@@ -180,6 +178,58 @@ Widget settingsDrawer(BuildContext context) {
           endIndent: 0,
           color: Theme.of(context).colorScheme.primary,
         ),
+        // 隠しボタン
+        const SizedBox(
+          height: 32,
+        ),
+        GestureDetector(
+          onTap: () {
+            PreferenceManager().debugPrintState();
+          },
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 16,
+              ),
+              Text(
+                "DebugSwitch",
+                style: TextStyle(
+                  fontSize: fontSize.body1,
+                  color: Theme.of(context).colorScheme.brightness ==
+                          Brightness.light
+                      ? Colors.grey[200]
+                      : Colors.black, // 200だとわからない
+                ),
+              ),
+            ],
+          ),
+        ),
+        // 隠しボタン2 ダミーメッセージ
+        const SizedBox(
+          height: 32,
+        ),
+        GestureDetector(
+          onTap: () {
+            PushNotificationService().debugMessageProc();
+          },
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 16,
+              ),
+              Text(
+                "DebugMessage",
+                style: TextStyle(
+                  fontSize: fontSize.body1,
+                  color: Theme.of(context).colorScheme.brightness ==
+                          Brightness.light
+                      ? Colors.grey[200]
+                      : Colors.black, // 200だとわからない
+                ),
+              ),
+            ],
+          ),
+        )
       ],
     ),
   );

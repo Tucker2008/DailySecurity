@@ -16,7 +16,6 @@ import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:cyber_interigence/util/logo_provider.dart';
 import 'package:cyber_interigence/repository/cache_manager.dart';
-import 'package:cyber_interigence/util/message_provider.dart';
 import 'package:cyber_interigence/repository/cycle_manager.dart';
 
 void main() async {
@@ -85,7 +84,6 @@ class _FirstScreenState extends ConsumerState<FirstScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    bool notifierMsgState = false;
     switch (state) {
       // アプリは表示されているが、フォーカスがあたっていない状態（対応なし）
       case AppLifecycleState.inactive:
@@ -107,20 +105,10 @@ class _FirstScreenState extends ConsumerState<FirstScreen>
         if (TimerProvider().inactiveDiference()) {
           // キャッシュを削除
           CacheManager().initCache();
-          // 再開時間をアップデート
-          TimerProvider().updateTimer();
         }
-        // Notificationから起動されたか？
-        if (MessageProvider().getMsg().isNotEmpty) {
-          MessageProvider().removeMsg();
-        }
-        if (!notifierMsgState) {
-          // 画面を再描画
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => super.widget));
-        }
+        // 画面を再描画
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) => super.widget));
         break;
     }
   }
@@ -160,12 +148,6 @@ class _FirstScreenState extends ConsumerState<FirstScreen>
     // Preferenceをロードする(最初にやらないとその後の参照系が動かない)
     PreferenceManager().loadPreference();
 
-    // 通知設定の初期化
-    final initialPreference = InitialPreference();
-    if (!await initialPreference.initialNotification()) {
-      // 通知設定がNGの場合には、イントロを表示する
-      return false;
-    }
     // 起動時間を初期化
     TimerProvider().updateTimer();
 
@@ -174,6 +156,13 @@ class _FirstScreenState extends ConsumerState<FirstScreen>
 
     // セキュリティシナリオの初期化
     CycleManager().init();
+
+    // 通知設定の初期化
+    final initialPreference = InitialPreference();
+    if (!await initialPreference.initialNotification()) {
+      // 通知設定がNGの場合には、イントロを表示する
+      return false;
+    }
 
     // 導入画面表示ステータスを返値として終了
     return PreferenceManager().getPreference().introductionState;

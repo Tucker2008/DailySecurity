@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cyber_interigence/global.dart';
+import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/pages/main_screen.dart';
 import 'package:cyber_interigence/repository/launch_url.dart';
 import 'package:cyber_interigence/util/screen_provider.dart';
@@ -34,24 +35,25 @@ const List<Color> _onPrimaryColorTable = [
 // 横並びタイル型コンテナ
 // タップしたらリンク先ページを表示
 //
-Widget tileContainer(
-    BuildContext context, String titleString, String linkString) {
+Widget tileContainer(BuildContext context, RssInformation rssInfo) {
   const margin = EdgeInsets.only(
     right: 8,
   );
   return simpleTileContainer(
-      context, titleString, linkString, margin, sizeConfig.tileContainerWidth!);
+      context, rssInfo, margin, sizeConfig.tileContainerWidth!);
 }
 
 //
 // パラーメータ指定可能な汎用タイル型コンテナ
 // タップしたらリンク先ページを表示
 //
-Widget simpleTileContainer(BuildContext context, String titleString,
-    String linkString, EdgeInsets margin, double width) {
+Widget simpleTileContainer(BuildContext context, RssInformation rssInfo,
+    EdgeInsets margin, double width) {
   // 色はランダムで設定
   final colorChoiceRect = Random().nextInt(10) % _primaryColorTable.length;
   final colorChoiceCircle = Random().nextInt(10) % _onPrimaryColorTable.length;
+  final titleString = rssInfo.title;
+
   return GestureDetector(
     child: Stack(
       clipBehavior: Clip.none,
@@ -111,7 +113,7 @@ Widget simpleTileContainer(BuildContext context, String titleString,
       ],
     ),
     onTap: () {
-      launchURL(context, linkString);
+      launchUrlByRss(context, rssInfo);
     },
   );
 }
@@ -185,13 +187,15 @@ Widget largeTileContainer(
     double containerWidth,
     IconData? iconImage,
     BuildContext context,
-    String titleString,
+    RssInformation? rssInfo,
+    String? title,
     int? screenNumber,
-    ImageProvider<Object>? avatarImage,
-    String? linked) {
+    ImageProvider<Object>? avatarImage,) {
   // 色はランダムで設定
   final colorChoiceRect = Random().nextInt(10) % _primaryColorTable.length;
   final colorChoiceCircle = Random().nextInt(10) % _onPrimaryColorTable.length;
+  final titleString = rssInfo != null ? rssInfo.title : title!;
+  // タイル表示作成
   return GestureDetector(
     child: Stack(
       clipBehavior: Clip.none,
@@ -264,8 +268,8 @@ Widget largeTileContainer(
           ),
           (Route<dynamic> route) => false,
         );
-      } else if (linked != null && linked.isNotEmpty) {
-        launchURL(context, linked);
+      } else if ( rssInfo != null ) {
+        launchUrlByRss(context, rssInfo);
       }
     },
   );

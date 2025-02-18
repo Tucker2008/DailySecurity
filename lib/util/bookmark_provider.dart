@@ -5,43 +5,62 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //
 // データ一覧からブックマークボタンを押したときのriverpod処理
-// データ一覧<List<RssInformation>>を管理しようとしたが、LIST更新を検知しない
-// ので単なるフラグ管理とする
+// Map型をStateNotifierで管理してBookMarkと同じ使い方が出来る
 
-class BookmarkNotifier extends StateNotifier<int> {
-  BookmarkNotifier() : super(0);
+// BookmarkProviderの定義
+// 関係モジュール共用
+var bookmarkProvider =
+    StateNotifierProvider<BookmarkNotifier, Map<String, RssInformation>>((ref) {
+  return BookmarkNotifier();
+});
+BookmarkNotifier bookmarkNotifier = BookmarkNotifier();
+
+//
+//Bookmark Notiferクラス本体
+//
+class BookmarkNotifier extends StateNotifier<Map<String, RssInformation>> {
+  BookmarkNotifier() : super(BookmarkManager().getBookmarkedMap());
 
   //
   // ブックマークのフラグを返す
-  // BookmarkManager().bookmarkedList でRssinformationに移しているので
-  // ここでは２重管理しない
   //
   bool flipBookmark(RssInformation info) {
     final manager = BookmarkManager();
     final bool bookmarkFlag = manager.getBookmarkState(info.link!);
 
     if (bookmarkFlag) {
+      _removeItem(info.link!);
       manager.removeBookmarks(info.link!);
     } else {
+      _addItem(info.link!, info);
       manager.addBookmark(info.link!, info);
     }
     // デバッグ用
-    // debugPrint("flipBookmak: ${info.bookmarked} ${info.link!}");
-    // ここでstateを変更する
-    state++;
+    // debugPrint(
+    //     "flipBookmak: $bookmarkFlag ${info.bookmarked} ${info.link!} ${_checkItem(info.link!)} ${manager.getBookmarkState(info.link!)}");
+    // if (_checkItem(info.link!) != manager.getBookmarkState(info.link!)) {
+    //   debugPrint(
+    //       "flipBookmak: status異常 ${_checkItem(info.link!)} ${manager.getBookmarkState(info.link!)}");
+    // }
+
     return (!bookmarkFlag);
   }
-}
 
-//Bookmark本体
-// Widget bookmarkIcon(String url, RssInformation info) {
-//   final manager = BookmarkManager();
-//   final bool flag = manager.getBookmarkState(url);
-//   return GestureDetector(
-//       onTap: () {
-//         flag ? manager.addBookmark(url, info) : manager.removeBookmarks(url);
-//       },
-//       child: flag
-//           ? const Icon(Icons.bookmark, size: 24, color: Colors.red)
-//           : const Icon(Icons.bookmark_outline, size: 24, color: Colors.black));
-// }
+  void voidFlipBookmark(RssInformation info) {
+    flipBookmark(info);
+  }
+
+  void _addItem(String key, RssInformation value) {
+    state = {...state, key: value};
+  }
+
+  void _removeItem(String key) {
+    final newState = Map<String, RssInformation>.from(state);
+    newState.remove(key);
+    state = newState;
+  }
+// デバッグ用
+  // bool _checkItem(String key) {
+  //   return Map<String, RssInformation>.from(state).containsKey(key);
+  // }
+}

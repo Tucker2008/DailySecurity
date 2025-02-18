@@ -35,13 +35,17 @@ class SizeConfig {
   double? drawerWidth;
   // メインメニューアイコンサイズ
   double mainMenuIconSize = 24;
+  double mainMenuCircleIconRadius = 22;
+    double mainMenuCircleInnerIconRadius = 20;
   double mainMenuIconRadius = 12;
   double mainMenuSelectedIconRadius = 14;
   double mainMenuHeight = 52; //NewsPicsベンチマーク値
+  // タイルのブックマークなどのアイコンサイズ
+  double tileIconSize = 32;
 
   // cycle_screen  リマインダーのContainer部品のサイズ
   double remainderCycleHeight = 396; //個別コンテナ72 タイル72*1.5
-  double remainderCycleHeightAdd = 444; //個別計測結果 remainderCycleHeight + 64;
+  double remainderCycleHeightAdd = 474; //個別計測結果 remainderCycleHeight + 64;
   double remainderHeaderHeight = 160;
   double remainderWinupdateHeight = 380;
   double remainderPassupdateHeight = 300;
@@ -87,12 +91,16 @@ class SizeConfig {
       mainMenuIconSize = 48;
       mainMenuIconRadius = 24;
       mainMenuSelectedIconRadius = 26;
+      mainMenuCircleIconRadius = 26;
+      mainMenuCircleInnerIconRadius = 24;
     } else if (screenWidth! >= 800) {
       screenWidthTimes = 1.4;
       tileCircleWidth = 48;
       mainMenuIconSize = 32;
       mainMenuIconRadius = 16;
       mainMenuSelectedIconRadius = 18;
+      mainMenuCircleIconRadius = 24;
+      mainMenuCircleInnerIconRadius = 22;
     } else {
       screenWidthTimes = 1;
     }

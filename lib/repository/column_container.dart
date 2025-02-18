@@ -14,22 +14,20 @@ Widget columnContainer(BuildContext context, List<RssInformation> columnList) {
   // 各ボックス共通の定義
   const BoxDecoration boxDecoration = BoxDecoration(
     borderRadius: BorderRadius.only(
-      topLeft: Radius.circular(15.0),
-      topRight: Radius.circular(10.0),
-      bottomLeft: Radius.circular(15.0),
-      bottomRight: Radius.circular(10.0),
-    ), //角を丸める
+        topLeft: Radius.circular(15.0),
+        topRight: Radius.circular(15.0),
+        bottomLeft: Radius.circular(15.0)), //角を丸める
   );
 
   // 表示コンテナの仕込み
   List<Widget> tiles = [];
   const tileMargin = EdgeInsets.only(left: 16, top: 16, right: 8, bottom: 16);
   for (var item in columnList) {
-    tiles.add(SizedBox(
-      height: 16 * sizeConfig.screenWidthTimes!,
+    tiles.add(const SizedBox(
+      height: 16,
     ));
     tiles.add(simpleTileContainer(
-        context, item.title, item.link!, tileMargin, double.infinity));
+        context, item, tileMargin, double.infinity));
   }
 
   // 表示コンテナ本体
@@ -38,7 +36,9 @@ Widget columnContainer(BuildContext context, List<RssInformation> columnList) {
     width: double.infinity,
     child: Container(
       height: double.infinity, //ここはデカくしても最大が決まっている
-      padding: const EdgeInsets.only(left: 16.0, top: 8),
+      padding: const EdgeInsets.only(
+        left: 16.0,
+      ),
       margin: const EdgeInsets.only(left: 8, right: 4, top: 4, bottom: 4),
 
       decoration: boxDecoration.copyWith(
@@ -92,9 +92,9 @@ Widget columnContainer(BuildContext context, List<RssInformation> columnList) {
               const Spacer(),
               // ブックマークへ誘導
               GestureDetector(
-                child: const Icon(
+                child: Icon(
                   Icons.bookmark_outline,
-                  size: 32,
+                  size: sizeConfig.tileIconSize,
                 ),
                 onTap: () {
                   // スクリーン番号をセットして

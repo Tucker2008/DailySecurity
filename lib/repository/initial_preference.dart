@@ -45,8 +45,13 @@ class InitialPreference {
     //   NoteProvider().setNote("Notification: get Token NOT Done");
     // }
 
-    // 最後にNotificationリスニングメソッドの設定
+    // Notificationリスニングメソッドの設定
     notificationService.startListeningForNewNotification();
+    // Backgroudで通知を受けた場合の処理登録
+    // Build6 (2025.2.16)
+    // FirebaseMessaging.onBackgroundMessage(
+    //     PushNotificationService().firebaseMessagingBackgroundHandler);
+
     return true;
   }
 

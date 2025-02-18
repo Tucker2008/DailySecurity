@@ -1,5 +1,5 @@
+import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
-import 'package:cyber_interigence/util/url_provider.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
@@ -9,18 +9,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // アプリ内でWebページを表示する
 //
 class PdfPage extends ConsumerStatefulWidget {
-  const PdfPage({super.key});
-
+  const PdfPage({super.key, required this.rss});
+  final RssInformation rss;
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _PdfPageState();
 }
 
 class _PdfPageState extends ConsumerState<PdfPage> {
-  // double _progress = 0.0;
   bool _isFirst = true;
-  // bool _isLoading = false;
   Widget dividerContainer = WidgetProvider().getWidget();
   String url = "";
+  RssInformation? rss;
 
   // 区切りのコンテナ指定
   void setDividerContainer(Widget argContainer) {
@@ -38,9 +37,10 @@ class _PdfPageState extends ConsumerState<PdfPage> {
     // Buildが複数回呼ばれるのでここで防ぐ（きれいな実装になってない）
     if (_isFirst) {
       _isFirst = false;
-      // 指定URLを取得して
-      url = UrlProvider().getUrl();
-      // debugPrint("_PdfPageState build $url");
+      // 引数のRSSを取り出す
+      rss = widget.rss;
+      // 指定URLを取得
+      url = widget.rss.link!;
       // 指定コンテナを受領
       setDividerContainer(WidgetProvider().getWidget());
     }
@@ -51,13 +51,6 @@ class _PdfPageState extends ConsumerState<PdfPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // _isLoading
-            //     ? LinearProgressIndicator(
-            //         value: _progress,
-            //         color: Theme.of(context).colorScheme.errorContainer,
-            //         minHeight: 10.0,
-            //       )
-            //     : const SizedBox.shrink(),
             // 区切り線（説明）
             dividerContainer,
             // Webページ

@@ -1,74 +1,24 @@
 import 'package:cyber_interigence/constant/url_constant.dart';
-import 'package:cyber_interigence/content/cocolog_content.dart';
-// import 'package:daily_security_dev/methods/associate_methods.dart';
 import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/column_container.dart';
 import 'package:cyber_interigence/repository/cycle_container.dart';
 import 'package:cyber_interigence/repository/news_container.dart';
 import 'package:cyber_interigence/repository/preference_manager.dart';
-import 'package:cyber_interigence/repository/push_notification_service.dart';
 import 'package:cyber_interigence/repository/rss_stream.dart';
 import 'package:cyber_interigence/repository/slide_tile_container.dart';
 import 'package:cyber_interigence/util/note_provider.dart';
-import 'package:cyber_interigence/util/message_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 // メイン画面に表示する記事数
 const entranceArticle = 4;
 
-// //
-// // アプリのメイン画面
-// //
-@immutable
-class EntranceScreen extends ConsumerStatefulWidget {
-  const EntranceScreen({super.key});
-  @override
-  EntranceScreenState createState() => EntranceScreenState();
-}
-
-// class EntranceScreenState extends ConsumerState<EntranceScreen>
-//     with AfterLayoutMixin<EntranceScreen> {
-class EntranceScreenState extends ConsumerState<EntranceScreen> {
-  // Build6でConsumerStatefulWidget化にした
-  // class EntranceScreen extends ConsumerWidget {
-  //   EntranceScreen({super.key});
-
-  @override
-  void initState() {
-    super.initState();
-    // Buildが完了したら移動先ページ処理をする登録をしておく
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => afterFirstLayout(context));
-  }
-
-  // Build完了を捉えて、移動先ページがあれば移動する
-  // @override
-  void afterFirstLayout(BuildContext context) {
-    // 通知のPayloadが指定されていれば移動
-    if (MessageProvider().getMsg().isNotEmpty) {
-      setState(() {});
-      // RssInfomationを作成（URLしか有効ではない）
-      RssInformation rss = RssInformation(
-        date: DateFormat('yyyy/MM/dd(E)').format(DateTime.now()),
-        title: "",
-        text: "",
-        link: MessageProvider().getMsg(),
-      );
-      // ここで移動先URLを削除しておく
-      MessageProvider().removeMsg();
-      // 指定されたページへ移動する
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => CocologContent(
-            cocologRss: rss,
-          ),
-        ),
-      );
-    }
-  }
+//
+// アプリのメイン画面
+//
+class EntranceScreen extends ConsumerWidget {
+  EntranceScreen({super.key});
 
   // Providerの定義（RSS読み込み関数をまるごとProvider定義）
   final cocologProvider = FutureProvider.autoDispose
@@ -76,11 +26,8 @@ class EntranceScreenState extends ConsumerState<EntranceScreen> {
     return allRssStreaming(cocologRss);
   });
 
-  //
-  // Buid
-  //
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // エラーメッセージ伝達用
     final noteProvider = NoteProvider();
 
@@ -103,7 +50,10 @@ class EntranceScreenState extends ConsumerState<EntranceScreen> {
         newsList = filteringList(informationList, "news", entranceArticle)!;
         columnList = filteringList(informationList, "column", entranceArticle)!;
       },
-      error: (error, stacktrace) => noteProvider.setNote(error.toString()),
+      error: (error, stacktrace) {
+        noteProvider.setNote(error.toString());
+        splashScreenException(error.toString());
+      },
       loading: () => splashScreenNoContext(),
     );
 
@@ -111,18 +61,19 @@ class EntranceScreenState extends ConsumerState<EntranceScreen> {
     PreferenceManager().updateLastLogin();
     // IPA等のニュースマージが間に合わない場合にはぐるぐるを出す
     if (meargeNews(entranceArticle) == null) {
-      return splashScreen(context);
+      // 何かエラーがあって抜けた場合
+      if (noteProvider.getStatus()) {
+        return splashScreenException(noteProvider.getNote());
+      } else {
+        // 単にデータ取得中
+        return splashScreen(context);
+      }
     } else {
       publicNewsList = meargeNews(4)!;
     }
 
     //ここまでRSS取得関連-----------
 
-    // Notificationをタップしたら起動する様に設定する
-    // Build6 (2025.2.16)
-    PushNotificationService().setLocalNotificationTap(context);
-
-    //画面描画-----------
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
