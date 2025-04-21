@@ -50,8 +50,10 @@ Widget tileContainer(BuildContext context, RssInformation rssInfo) {
 Widget simpleTileContainer(BuildContext context, RssInformation rssInfo,
     EdgeInsets margin, double width) {
   // 色はランダムで設定
-  final colorChoiceRect = Random().nextInt(10) % _primaryColorTable.length;
-  final colorChoiceCircle = Random().nextInt(10) % _onPrimaryColorTable.length;
+  final colorChoiceRect = Random(DateTime.now().microsecond).nextInt(10) %
+      _primaryColorTable.length;
+  final colorChoiceCircle = Random(DateTime.now().microsecond).nextInt(10) %
+      _onPrimaryColorTable.length;
   final titleString = rssInfo.title;
 
   return GestureDetector(
@@ -125,8 +127,10 @@ Widget simpleTileContainer(BuildContext context, RssInformation rssInfo,
 Widget containerTileContainer(BuildContext context, Widget content,
     String titleString, EdgeInsets margin, double width) {
   // 色はランダムで設定
-  final colorChoiceRect = Random().nextInt(10) % _primaryColorTable.length;
-  final colorChoiceCircle = Random().nextInt(10) % _onPrimaryColorTable.length;
+  final colorChoiceRect = Random(DateTime.now().microsecond).nextInt(10) %
+      _primaryColorTable.length;
+  final colorChoiceCircle = Random(DateTime.now().microsecond).nextInt(10) %
+      _onPrimaryColorTable.length;
   return SizedBox(
     width: width,
     height: sizeConfig.tileContainerHeight, // 72 + 32,
@@ -183,17 +187,20 @@ Widget containerTileContainer(BuildContext context, Widget content,
 // タップしたら機能ページを呼ぶ
 
 Widget largeTileContainer(
-    double containerHeight,
-    double containerWidth,
-    IconData? iconImage,
-    BuildContext context,
-    RssInformation? rssInfo,
-    String? title,
-    int? screenNumber,
-    ImageProvider<Object>? avatarImage,) {
+  double containerHeight,
+  double containerWidth,
+  IconData? iconImage,
+  BuildContext context,
+  RssInformation? rssInfo,
+  String? title,
+  int? screenNumber,
+  ImageProvider<Object>? avatarImage,
+) {
   // 色はランダムで設定
-  final colorChoiceRect = Random().nextInt(10) % _primaryColorTable.length;
-  final colorChoiceCircle = Random().nextInt(10) % _onPrimaryColorTable.length;
+  final colorChoiceRect = Random(DateTime.now().microsecond).nextInt(10) %
+      _primaryColorTable.length;
+  final colorChoiceCircle = Random(DateTime.now().microsecond).nextInt(10) %
+      _onPrimaryColorTable.length;
   final titleString = rssInfo != null ? rssInfo.title : title!;
   // タイル表示作成
   return GestureDetector(
@@ -268,7 +275,7 @@ Widget largeTileContainer(
           ),
           (Route<dynamic> route) => false,
         );
-      } else if ( rssInfo != null ) {
+      } else if (rssInfo != null) {
         launchUrlByRss(context, rssInfo);
       }
     },

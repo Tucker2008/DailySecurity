@@ -11,7 +11,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # 1.0.3+4: リジェクト対応版
 # 1.0.4+5: 再リジェクト対応版(project: Build5)：AppStore通過済
 # 1.0.5+6: Androidリリース版(project: Build6)
-version: 1.0.5+6
+# 1.0.6+7: project: Build7 (ニュースソース追加／英訳機能追加)
+version: 1.0.6+7
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -36,7 +37,7 @@ dependencies:
   google_fonts: 
   flutter_riverpod: 
   hooks_riverpod:
-  flutter_local_notifications:
+  flutter_local_notifications: 
   introduction_screen:  
   loading_animation_widget: 
   flutter_launcher_icons:
@@ -44,6 +45,8 @@ dependencies:
   webview_flutter:
   synchronized:
   package_info_plus: 
+  flutter_inappwebview: 
+  share_plus: 
 
   # 特記事項
   # 
@@ -69,6 +72,7 @@ flutter:
   # リソース関連の定義
   assets:
     - images/
+    - images/logo/
     - images/servicel2w.png
     - images/servicel2b.png
 

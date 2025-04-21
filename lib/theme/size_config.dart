@@ -36,7 +36,7 @@ class SizeConfig {
   // メインメニューアイコンサイズ
   double mainMenuIconSize = 24;
   double mainMenuCircleIconRadius = 22;
-    double mainMenuCircleInnerIconRadius = 20;
+  double mainMenuCircleInnerIconRadius = 20;
   double mainMenuIconRadius = 12;
   double mainMenuSelectedIconRadius = 14;
   double mainMenuHeight = 52; //NewsPicsベンチマーク値

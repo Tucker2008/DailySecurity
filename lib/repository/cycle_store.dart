@@ -8,7 +8,6 @@ import 'package:cyber_interigence/model/cycle_schedule.dart';
 const String cycleProfKey = 'securityCycle';
 
 class CycleStore {
-
   Future<void> saveCycle(CycleSchedule cycleSchedule) async {
     final cycles = await SharedPreferences.getInstance();
     //この1行で保存のための変換を行なっている。
@@ -26,7 +25,6 @@ class CycleStore {
 
     //何も保存されていない場合はデフォルトを生成
     if (encoded == null) {
-
       // if (debugPreference) {
       //   debugPrint("loadCycle: nothing Cycle");
       // }
@@ -37,7 +35,8 @@ class CycleStore {
     //   debugPrint("loadCycle: $encoded");
     // }
     //JSON変換を行なって取得データを返す
-    return Future<CycleSchedule>.value(CycleSchedule.fromJson(jsonDecode(encoded)));
+    return Future<CycleSchedule>.value(
+        CycleSchedule.fromJson(jsonDecode(encoded)));
   }
 
   Future<void> removeCycle() async {

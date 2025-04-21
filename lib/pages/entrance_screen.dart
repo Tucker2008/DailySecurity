@@ -5,6 +5,7 @@ import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/column_container.dart';
 import 'package:cyber_interigence/repository/cycle_container.dart';
+import 'package:cyber_interigence/repository/mearge_news.dart';
 import 'package:cyber_interigence/repository/news_container.dart';
 import 'package:cyber_interigence/repository/preference_manager.dart';
 import 'package:cyber_interigence/repository/push_notification_service.dart';

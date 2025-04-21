@@ -2,9 +2,8 @@ import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:cyber_interigence/content/cocolog_content.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/pdf_page.dart';
-// import 'package:daily_security_dev/util/url_provider.dart';
+import 'package:cyber_interigence/repository/web_page_inappview.dart';
 import 'package:flutter/material.dart';
-// import 'package:daily_security_dev/content/cocolog_content.dart';
 import 'package:cyber_interigence/repository/web_page.dart';
 import 'package:intl/intl.dart';
 
@@ -16,24 +15,29 @@ import 'package:intl/intl.dart';
 void launchURL(BuildContext context, String url) {
   // ダミーのRSSを作成しておいてWebページ表示する
   RssInformation rss = RssInformation(
-      date: DateFormat('yyyy/MM/dd(E)').format(DateTime.now()), title: "", text: "",);
+    date: DateFormat('yyyy/MM/dd(E)').format(DateTime.now()),
+    title: "",
+    text: "",
+  );
   // タイトル行をクリックしても反応しない様にここでガード
   if (url.isNotEmpty) {
     rss = rss.copyWith(link: url);
-  
+
     // PDFの場合は別のviewerを起動する
     // 特にAndroidの場合はPDFを表示出来ない
 
-      // ページを呼ぶ
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => url.endsWith('.pdf')
-              ? PdfPage(rss: rss,)
-              : WebPage(
-                  rss: rss,
-                ),
-        ),
-      );
+    // ページを呼ぶ
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => url.endsWith('.pdf')
+            ? PdfPage(
+                rss: rss,
+              )
+            : WebPage(
+                rss: rss,
+              ),
+      ),
+    );
   }
 }
 
@@ -72,10 +76,14 @@ void launchUrlByRss(BuildContext context, RssInformation rss) {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => url.endsWith('.pdf')
-              ? PdfPage(rss: rss,)
-              : WebPage(
+              ? PdfPage(
                   rss: rss,
-                ),
+                )
+              : rss.lang!.startsWith("Eng")
+                  ? WebPageInappview(rss: rss)
+                  : WebPage(
+                      rss: rss,
+                    ),
         ),
       );
     }

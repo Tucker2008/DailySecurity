@@ -26,8 +26,7 @@ Widget columnContainer(BuildContext context, List<RssInformation> columnList) {
     tiles.add(const SizedBox(
       height: 16,
     ));
-    tiles.add(simpleTileContainer(
-        context, item, tileMargin, double.infinity));
+    tiles.add(simpleTileContainer(context, item, tileMargin, double.infinity));
   }
 
   // 表示コンテナ本体
@@ -90,15 +89,15 @@ Widget columnContainer(BuildContext context, List<RssInformation> columnList) {
                 },
               ),
               const Spacer(),
-              // ブックマークへ誘導
+              // 2025.4.17 ブックマークへ誘導 からColumnページへ変更
               GestureDetector(
                 child: Icon(
-                  Icons.bookmark_outline,
+                  Icons.article_outlined,
                   size: sizeConfig.tileIconSize,
                 ),
                 onTap: () {
                   // スクリーン番号をセットして
-                  ScreenProvider().setScreen(bookmarkPageNum);
+                  ScreenProvider().setScreen(cocologPageNum);
                   // ページを呼ぶ
                   // このページの呼び方ではスタックしないので行ったきりに出来る
                   // Thanks to StackOverflow

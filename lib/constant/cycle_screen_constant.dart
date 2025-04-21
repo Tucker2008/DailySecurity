@@ -41,8 +41,10 @@ const awakeButtonMessage = "下の注意喚起ボタンを押して下さい";
 const buttonUpdateDoing = 'アップデートしました';
 const assertUpdateDoing = '注意喚起しました';
 
-const winupdateMessage = "Windows Updateは毎月定例的に配布され、脆弱性の対応などが行われます。これによりパソコンの安全性を保つことができます。\nWindows Updateが実施されていることを確認したら、";
-const passwordUpdateMessage = "パスワードは一般的に90日ごとに更新するなど、一定期間の更新が推奨されています。パスワードを更新したら、";
+const winupdateMessage =
+    "Windows Updateは毎月定例的に配布され、脆弱性の対応などが行われます。これによりパソコンの安全性を保つことができます。\nWindows Updateが実施されていることを確認したら、";
+const passwordUpdateMessage =
+    "パスワードは一般的に90日ごとに更新するなど、一定期間の更新が推奨されています。パスワードを更新したら、";
 const virusUpdateMessage =
     "ウィルス対策ソフトまたはEDPのパターンファイルを定期的に更新することが推奨されます。\nウィルス定義ファイルを更新したら";
 const dataBackupMessage =

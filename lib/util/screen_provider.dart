@@ -1,6 +1,7 @@
 //
 // スクリーン番号の受け渡し用
 //
+// 2025.4.17 メインスクリーンのBookMark廃止、海外ニュース追加
 
 // スクリーン番号定義
 enum ScreenNum {
@@ -8,14 +9,14 @@ enum ScreenNum {
   cocologPage,
   cycleScreen,
   newsMainPage,
-  bookmarkPage,
+  foreignNewsPage,
 }
 
 final int entranceScreenNum = ScreenNum.entranceScreen.index;
 final int cocologPageNum = ScreenNum.cocologPage.index;
 final int cycleScreenNum = ScreenNum.cycleScreen.index;
 final int newsMainPageNum = ScreenNum.newsMainPage.index;
-final int bookmarkPageNum = ScreenNum.bookmarkPage.index;
+final int foreignNewsPageNum = ScreenNum.foreignNewsPage.index;
 
 //
 // スクリーン番号の受け渡しクラス

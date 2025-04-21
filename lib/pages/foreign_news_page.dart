@@ -1,96 +1,87 @@
+import 'package:cyber_interigence/constant/url_constant.dart';
+import 'package:cyber_interigence/global.dart';
+import 'package:cyber_interigence/methods/associate_methods.dart';
 import 'package:cyber_interigence/methods/splash_screen.dart';
+import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/bookmark_manager.dart';
-// import 'package:cyber_interigence/repository/dialog_input.dart';
 import 'package:cyber_interigence/repository/launch_url.dart';
 import 'package:cyber_interigence/repository/mearge_news.dart';
+import 'package:cyber_interigence/repository/rss_stream.dart';
 import 'package:cyber_interigence/util/bookmark_provider.dart';
 import 'package:cyber_interigence/util/color_provider.dart';
-import 'package:cyber_interigence/repository/rss_stream.dart';
+import 'package:cyber_interigence/util/note_provider.dart';
 import 'package:cyber_interigence/util/post_category.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:cyber_interigence/constant/feed_constant.dart';
-import 'package:cyber_interigence/constant/url_constant.dart';
-import 'package:cyber_interigence/util/note_provider.dart';
-import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cyber_interigence/global.dart';
-
-// RSSで取得したデータを格納する(rss_infomation.dart)
-// データ元はCacheManager
-List<RssInformation> informationList = [];
 
 //
-// ココログのRSS記事一覧画面
-//
-class CocologPage extends ConsumerWidget {
-  CocologPage({super.key, required this.argCategory});
+// 海外ニュース専用ページ
+// 2025.4.17
 
-  final String argCategory;
+class ForeignNewsPage extends ConsumerWidget {
+  ForeignNewsPage({super.key});
 
   // Providerの定義（RSS読み込み関数をまるごとProvider定義）
-  final cocologProvider = FutureProvider.autoDispose
+  final feedProvider = FutureProvider.autoDispose
       .family<List<RssInformation>, String>((ref, url) async {
-    return rssStreaming(cocologRss);
+    return foreignNewsRssStreaming(url);
   });
-
-  // 取得したリストにブックマークされているかフラグを付ける
-  int _addBookmark2InfomationList() {
-    informationList = BookmarkManager().bookmarkedList(informationList);
-    return informationList.length;
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // RSSで取得したデータを格納する(rss_infomation.dart)
+    List<RssInformation> informationList = [];
     // エラーメッセージ伝達用
     final noteProvider = NoteProvider();
-    // Webページ用のコンテナ初期化
-    WidgetProvider().removeWidget();
 
-    // ココログのコラム コンテナ作成(context引き渡しのため関数化)
-    final Widget cocologColumnContainer = _makeCocologColumnContainer(context);
+    // WebPage表示時のContainer指定
+    WidgetProvider().setWidget(feedFirstWebContainer);
 
     // Feedを読む(fetch_feed.dart)
     // Feedを読む機能をfeedProvider登録し、その返り値を取得する
     final AsyncValue<List<RssInformation>> activity =
-        ref.watch(cocologProvider(cocologRss));
+        ref.watch(feedProvider(""));
     activity.when(
       data: (data) {
-        // カテゴリ指定されていた場合にはフィルタする
-        if (argCategory.isNotEmpty) {
-          informationList = filteringList(data, argCategory, minFeedCount)!;
-        } else {
-          informationList = data;
-        }
+        informationList = data;
       },
       error: (error, stacktrace) => noteProvider.setNote(error.toString()),
       loading: () => splashScreenNoContext(),
     );
 
+    // NewsFeedのまとめソートを受け取る
     // IPA等のニュースマージが間に合わない場合にはぐるぐるを出す
-    if (informationList.isEmpty) {
+    if (meargeForeignNews(0) == null) {
       return splashScreen(context);
+    } else {
+      // 取得したリストにブックマークされているかフラグを付ける
+      informationList = BookmarkManager().bookmarkedList(meargeForeignNews(0)!);
     }
 
-    // Bookmark Providerのwatchを定義
-    final bookmarkMap = ref.watch(bookmarkProvider);
+    // BookMarkProviderにWatch定義
+    Map<String, RssInformation> bookmarkMap = ref.watch(bookmarkProvider);
     bookmarkNotifier = ref.read(bookmarkProvider.notifier);
 
+    // 何かエラーが発生していたら表示
+    if (!noteProvider.isEmpty()) {
+      AssociateMethods associateMethods = AssociateMethods();
+      associateMethods.showSnackBarMsg(noteProvider.getNote(), context);
+    }
+
+    // 画面build
     return Scaffold(
-        // AppBar Build5で表示方法変更のためappbarを表示しない
-        // appBar: AppbarConstant().getAppbarConstant(),
-        // 記事一覧表示
+        // AppBar は main_screenにて対応済みの場合には出さず
         body: SingleChildScrollView(
       child: Column(
         children: [
           // ここには記事カテゴリに関する説明やヘッダを入れる
-          argCategory == "news" ? cocologNewsContainer : cocologColumnContainer,
+          foreignFirstContainer,
           //
           // 記事一覧のRSS表示本体
           //
           ListView.builder(
-            // 取得したリストにブックマークされているかフラグを付ける
-            itemCount: _addBookmark2InfomationList(),
+            itemCount: informationList.length,
 
             scrollDirection: Axis.vertical, // スクロール方向を垂直に設定
             reverse: false, // 順序を逆にしない
@@ -133,14 +124,13 @@ class CocologPage extends ConsumerWidget {
                       // Bookmarkマークは日付の前に移動(2025.2.12)
                       bookmarkMap.containsKey(informationList[index].link!)
                           ? Icon(Icons.bookmark,
-                              size: fontSize.subTitle1,
+                              size: fontSize.subTitle2,
                               color: Theme.of(context).colorScheme.primary)
                           : SizedBox(
-                              width: fontSize.subTitle1,
+                              width: fontSize.subTitle2,
                             ),
                     ],
                   ),
-
                   subtitleTextStyle: TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: fontSize.subTitle2,
@@ -160,111 +150,43 @@ class CocologPage extends ConsumerWidget {
                     // 行間を少し狭く
                     height: 1.2,
                   ),
-                  // タップされた時に記事を表示
                   onTap: () {
-                    // ページ表示
+                    debugPrint('foreign_news URL: ${informationList[index]}');
                     launchUrlByRss(context, informationList[index]);
                   },
                   textColor: Theme.of(context).colorScheme.onSurface,
                   // カテゴリ毎のアイコン
                   // カテゴリ指定がない場合だけにアイコンを表示する
                   leading: (informationList[index].category!.isNotEmpty &&
-                          informationList[index].category! != "N/A" &&
-                          argCategory.isEmpty)
+                          informationList[index].category! != "N/A")
                       ? (iconAvalable(informationList[index].category!)
                           ? Icon(
                               postCategoryIcon(
                                   informationList[index].category!),
-                              size: 24,
+                              size: 24 * (sizeConfig.screenWidthTimes!),
                             )
                           : CircleAvatar(
                               backgroundImage: postCategotyImageicon(
                                   informationList[index].category!),
-                              radius: 12.0, //ここは半径を指定する
+                              radius: 16.0 *
+                                  (sizeConfig.screenWidthTimes!), //ここは半径を指定する
                             ))
                       : null,
-                  // 記事右のBookmarkマークは日付の前に移動(2025.2.12)
+                  // 記事右のリンクアイコン
+                  // Bookmarkマークは日付の前に移動(2025.2.12)
                 ),
               );
             },
           ),
         ],
       ),
-    )
-        // --------------------------
-        );
+    ));
   }
 
   //
-  // インシデントに学ぶセキュリティアクション（説明Container）
+  // ニュースの説明
   //
-  Widget _makeCocologColumnContainer(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: boxdecorationColor,
-        border: Border(
-          bottom: BorderSide(color: borderColor),
-          top: BorderSide(color: borderColor),
-        ),
-      ),
-      width: double.infinity,
-      padding:
-          const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 8.0),
-      margin: const EdgeInsets.all(4.0),
-      child: Row(
-        children: [
-          // const SizedBox(
-          //   width: 30,
-          // ),
-          const Spacer(),
-          Column(
-            // 中央揃え
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                cocologTitle1,
-                style: TextStyle(
-                  // color: frontColor,
-                  fontSize: fontSize.subTitle2,
-                ),
-              ),
-              Text(
-                cocologTitle2,
-                style: TextStyle(
-                    // color: frontColor,
-                    fontSize: fontSize.subTitle1,
-                    fontWeight: FontWeight.w700),
-              ),
-            ],
-          ),
-
-          const Spacer(),
-          // ※2025.4.20 検索機能は作り直しなので、検索ボタンは封印
-          // IconButton(
-          //   icon: Icon(
-          //     Icons.search_rounded, // content_paste_search_outlined,
-          //     size: sizeConfig.mainMenuIconSize,
-          //   ),
-          //   // アイコンが押されたときの処理
-          //   onPressed: () {
-          //     inputDialog(context, '記事検索', '検索内容を入力', 'キャンセル', '検索');
-          //     // String title, String hint,String cancelTitle, String goTitle
-
-          //   },
-          // ),
-          // const SizedBox(
-          //   width: 30,
-          // ),
-        ],
-      ),
-    );
-  }
-
-  //
-  // インシデントに学ぶセキュリティアクション（説明Container）
-  //
-  final Widget cocologNewsContainer = Container(
+  final Widget foreignFirstContainer = Container(
     decoration: BoxDecoration(
       color: boxdecorationColor,
       border: Border(
@@ -273,27 +195,43 @@ class CocologPage extends ConsumerWidget {
       ),
     ),
     width: double.infinity,
-    padding:
-        const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 8.0),
-    margin: const EdgeInsets.all(4.0),
+    padding: const EdgeInsets.only(left: 16.0, right: 16.0),
     child: Column(
-      // 中央揃え
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          cocologNews1,
+          "海外のセキュリティニュースサイトの$newsDetail",
           style: TextStyle(
-            // color: frontColor,
             fontSize: fontSize.subTitle2,
           ),
         ),
+      ],
+    ),
+  );
+
+  //
+  // WEBページの説明
+  //
+  final Widget feedFirstWebContainer = Container(
+    decoration: BoxDecoration(
+      color: boxdecorationColor,
+      border: Border(
+        bottom: BorderSide(color: borderColor),
+        top: BorderSide(color: borderColor),
+      ),
+    ),
+    width: double.infinity,
+    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
         Text(
-          cocologNews2,
+          webTitle,
           style: TextStyle(
-              // color: frontColor,
-              fontSize: fontSize.subTitle1,
-              fontWeight: FontWeight.w700),
+            fontSize: fontSize.oberline,
+          ),
         ),
       ],
     ),

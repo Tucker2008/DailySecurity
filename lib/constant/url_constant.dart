@@ -14,6 +14,92 @@ const jpcertStartURL = "https://www.jpcert.or.jp";
 const cocologRss = "https://aokabi.way-nifty.com/blog/index.rdf";
 const cocologHost = "aokabi.way-nifty.com";
 
+// 海外サイトのRSS URL
+const cisaRss = "https://www.cisa.gov/news.xml";
+const ncscRss = "https://www.ncsc.gov.uk/api/1/services/v1/report-rss-feed.xml";
+const swRss = "https://feeds.feedburner.com/securityweek";
+const hnRss = "https://feeds.feedburner.com/TheHackersNews";
+const nistRSS = "https://www.nist.gov/news-events/cybersecurity/rss.xml";
+const sosRss = "https://www.schneier.com/feed/atom/";
+const taoRss = "http://taosecurity.blogspot.com/atom.xml";
+const krebRss = "https://krebsonsecurity.com/feed/";
+
+// フィッシングサイト
+const fishRss = "http://www.antiphishing.jp/atom.xml";
+
+//
+// カテゴリ定義
+const ipaCategory = "ipa";
+const jvnCategory = "jvn";
+const jcrCategory = "jcr";
+const fisCategory = "fis";
+// 海外サイト
+const cisCategory = "cis";
+const ncsCategory = "ncs";
+const swnCategory = "swn";
+const hnnCategory = "hnn";
+const krbCategory = "krb";
+const nisCategory = "nis";
+const sosCategory = "sos";
+const taoCategory = "tao";
+
+// post_category.dartにも同様の種類定義あり
+const Map<String, String> rssUrls = {
+  ipaRss: ipaCategory,
+  jvnRss: jvnCategory,
+  jpcertRss: jcrCategory,
+  fishRss: fisCategory,
+};
+
+// アプリスタート時に必ず読むニュース
+const Map<String, String> startRssUrls = {
+  ipaRss: ipaCategory,
+  jvnRss: jvnCategory,
+  jpcertRss: jcrCategory,
+};
+
+// 海外ニュースサイト
+const Map<String, String> foreignRssUrls = {
+  cisaRss: cisCategory,
+  ncscRss: ncsCategory,
+  swRss: swnCategory,
+  hnRss: hnnCategory,
+  krebRss: krbCategory,
+  nistRSS: nisCategory,
+  sosRss: sosCategory,
+  taoRss: taoCategory,
+};
+
+// 英訳が必要なサイト群
+// ※うまく動かなそうなサイトは英訳サイトに入れない様にする
+const List<String> translateSite = [
+  cisaRss, // 確認済
+  // ncscRss,   // うまく動かない
+  // swRss,     // うまく動かない
+  hnRss, // 確認済
+  krebRss, // 確認済
+  nistRSS, // 確認済
+  sosRss, // 確認済
+  taoRss // 確認済
+];
+
+// CategoryとIconファイルとの対照表
+const Map<String, String> categoryIconMap = {
+  ipaCategory: 'ipa_logo.png',
+  jvnCategory: 'jvn_logo.png',
+  jcrCategory: 'jcr_logo.png',
+  fisCategory: 'fis_logo.png',
+  // 海外サイト系
+  cisCategory: 'cis_logo.png',
+  ncsCategory: 'ncs_logo.png',
+  swnCategory: 'securityweek.png',
+  hnnCategory: 'thehackernews.png',
+  krbCategory: 'krebsonsecurity.png',
+  nisCategory: 'nist.png',
+  sosCategory: 'schneier.png',
+  taoCategory: 'taosecurity.png',
+};
+
 // 各情報サイトの説明文
 // IPA
 const ipaName = "IPA（情報処理推進機構）の重要なセキュリティ情報";

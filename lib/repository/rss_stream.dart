@@ -1,109 +1,84 @@
 import 'dart:convert';
 import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:cyber_interigence/global.dart';
+import 'package:cyber_interigence/model/atom_information.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/cache_manager.dart';
 import 'package:cyber_interigence/repository/preference_manager.dart';
-import 'package:cyber_interigence/util/url_provider.dart';
-// import 'package:flutter/material.dart';
+import 'package:cyber_interigence/util/note_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart' show DateFormat;
 import 'package:webfeed_plus/webfeed_plus.dart';
-
-//
-// キャッシュにロードしておいたニュースソースのRSSinformationをマージ
-// 時系列ソートしてcategoryにソース名を入れる
-//
-List<RssInformation> margeList = [];
-
-List<RssInformation>? meargeNews(int max) {
-  List<RssInformation> margedList = [];
-  List<RssInformation> tmpList = [];
-
-  // すでにリストがあるならそのまま使う
-  if (margeList.isEmpty) {
-    // キャッシュがないなら早すぎるので返す
-    if (CacheManager().getRssCacheIsEmpty(ipaRss)) {
-      return null;
-    }
-
-    // キャッシュから読み込んでマージする
-    tmpList = CacheManager().getRssCache(ipaRss)!;
-    // 何故かforEach文が使えない
-    for (var element in tmpList) {
-      margeList.add( element.copyWith(category: "ipa"));
-    }
-
-    tmpList = CacheManager().getRssCache(jvnRss)!;
-    for (var element in tmpList) {
-      margeList.add(  element.copyWith(category: "jvn"));
-    }
-
-    tmpList = CacheManager().getRssCache(jpcertRss)!;
-    for (var element in tmpList) {
-      // JPCERTはURLのモバイル変換が必要
-      margeList.add( element.copyWith(
-        category: "jcr",
-        link: UrlProvider().jpcertUrl(element.link!),
-      ));
-    }
-
-    // マージしたリストを時系列にソートする
-    margeList.sort((a, b) => DateFormat('yyyy/MM/dd(E)')
-        .parse(b.date)
-        .compareTo(DateFormat('yyyy/MM/dd(E)').parse(a.date)));
-  }
-
-  // ここで件数指定があれば規定数にして返す
-  if (max > 0) {
-    for (int i = 0; i < max; i++) {
-      margedList.add(margeList[i]);
-    }
-    return margedList;
-  }
-
-  return margeList;
-}
-
-// カテゴリ毎にRSSをフィルタする（ついでに件数も制限する）
-List<RssInformation>? filteringList(
-    List<RssInformation> originList, String category, int maxCount) {
-  List<RssInformation> processedList = [];
-  int counter = 0;
-  // nullチェック
-  if (originList.isEmpty) {
-    return processedList;
-  }
-  // カテゴリチェック
-  for (var item in originList) {
-    // カテゴリとカウントのチェック
-    if (((category.isNotEmpty) && (item.category == category)) &&
-        (counter < maxCount)) {
-      processedList.add(item);
-      counter++;
-    }
-  }
-  // debugPrint("filteringList: $category : ${originList.length} -> $counter");
-  return processedList;
-}
 
 //
 // 必要な全てのRSSを読んで、cocologのRSSInformationを返す
 //
 Future<List<RssInformation>> allRssStreaming(String url) async {
-  await rssStreaming(ipaRss);
-  await rssStreaming(jvnRss);
-  await rssStreaming(jpcertRss);
-  return rssStreaming(url);
+  List<RssInformation>? rsss = [];
+  // debugPrint("allRssStreaming: $url");
+  await rssStreaming(url).then((value) {
+    rsss = value;
+  });
+  // debugPrint("allRssStreaming: before");
+  await startNewsRssStreaming("");
+  return Future<List<RssInformation>>.value(rsss);
 }
 
 //
-// 必要な全てのニュース系RSSを読む
+// 起動最初に必要な全てのニュース系RSSを読む
+//
+Future<List<RssInformation>> startNewsRssStreaming(String url) async {
+  List<RssInformation> rsss = [];
+  for (var rss in startRssUrls.keys) {
+    // debugPrint("startNewsRssStreaming: $rss");
+    await rssStreaming(rss).then((value) {
+      rsss = value;
+    }).whenComplete(() {
+      // debugPrint("startNewsRssStreaming:Complete! $rss");
+    }).catchError((error) {
+      // debugPrint("startNewsRssStreaming:Error! $error $rss");
+      NoteProvider().setNote("startNewsRssStreaming:Error! $error $rss");
+    });
+  }
+  return Future<List<RssInformation>>.value(rsss);
+}
+
+//
+// ニュース画面に必要な追加のニュース系RSSを読む
 //
 Future<List<RssInformation>> allNewsRssStreaming(String url) async {
-  await rssStreaming(ipaRss);
-  await rssStreaming(jvnRss);
-  return rssStreaming(jpcertRss);
+  List<RssInformation> rsss = [];
+  for (var rss in rssUrls.keys) {
+    // debugPrint("allNewsRssStreaming: $rss");
+    await rssStreaming(rss).then((value) {
+      rsss = value;
+    }).whenComplete(() {
+      // debugPrint("allNewsRssStreaming:Complete! $rss");
+    }).catchError((error) {
+      debugPrint("allNewsRssStreaming:Error! $error $rss");
+      NoteProvider().setNote("allNewsRssStreaming:Error! $error $rss");
+    });
+  }
+  return Future<List<RssInformation>>.value(rsss);
+}
+
+//
+// ニュース画面に必要な追加のニュース系RSSを読む
+//
+Future<List<RssInformation>> foreignNewsRssStreaming(String url) async {
+  List<RssInformation> rsss = [];
+  for (var rss in foreignRssUrls.keys) {
+    await rssStreaming(rss)
+        .then((value) {
+          rsss = value;
+        })
+        .whenComplete(() {})
+        .catchError((error) {
+          debugPrint("foreignNewsRssStreaming:Error! $error $rss");
+          NoteProvider().setNote("foreignNewsRssStreaming:Error! $error $rss");
+        });
+  }
+  return Future<List<RssInformation>>.value(rsss);
 }
 
 //
@@ -114,13 +89,16 @@ Future<List<RssInformation>> rssStreaming(String url) async {
   List<RssInformation> informationList = [];
   // キャッシュ
   final cacheManeger = CacheManager();
+  // 日付確認用
+  DateTime? postDate;
+  // 前回ログイン時を取得
+  DateTime lastLogin = PreferenceManager().getLastLogin();
+  // カウンター
+  int feedCounter = 0;
+  // ATOM処理のlink取り出し用
+  String atomLinkString = "";
 
   // chache済みならそのままそれを帰す
-  // if (debugCache) {
-  // debugPrint(
-  //     "cocologProvider.cacheStatus: $url ${cacheManeger.getRssCacheIsEmpty(url) ? "EMPTY" : "FIND"}");
-  // }
-
   if (!cacheManeger.getRssCacheIsEmpty(url)) {
     informationList = cacheManeger.getRssCache(url)!;
     // if (debugCache) {
@@ -139,52 +117,136 @@ Future<List<RssInformation>> rssStreaming(String url) async {
     // }
     throw Exception('Failed to fetch RSS');
   }
+  // else {
+  //   if (debugRssFeed) {
+  //     debugPrint("response.statusCode: ${response.statusCode} $url");
+  //   }
+  // }
 
-  //   取得したRSS/XMLをParseにかけて分解
-  var feed = RssFeed.parse(utf8.decode(response.bodyBytes));
-  int feedCounter = 0;
-  DateTime lastLogin = PreferenceManager().getLastLogin();
+  // ATOM処理
+  //  取得したATOM/XMLをParseにかけて分解
+  if (url.contains("atom")) {
+    var atomFeed = AtomFeed.parse(utf8.decode(response.bodyBytes));
 
-  //   itemsの個別データ分解
+    // AtomLink対応用
+    atomLinkString = "";
+    //   itemsの個別データ分解
+    for (var item in atomFeed.items!) {
+      AtomInformation atom = AtomInformation.fromFeed(item);
 
-  for (var item in feed.items!) {
-    // Feedを個別構造に分解する
-    informationList.add(RssInformation.fromFeed(item));
+      // AtomLinkの取り出し
+      // AtomLinkがListで収められているので、HTMLしか取り出さない
+      for (var atoms in item.links!) {
+        // debugPrint("AtomInformation :${atoms.href.toString()}");
+        if (atoms.href!.endsWith("html")) {
+          // debugPrint("AtomInformation HTML :${atoms.href.toString()}");
+          atomLinkString = atoms.href!;
+        }
+      }
 
-    // 最大定義期間までしか取り込まない
-    // LastLoginから規定(30日)以内で、規定内件数以内である
-    DateTime postDate = item.dc?.date as DateTime;
+      RssInformation rss = RssInformation(
+          date: atom.date,
+          title: atom.title,
+          text: atom.text,
+          link: atomLinkString.isNotEmpty ? atomLinkString : atom.link,
+          category: atom.category);
 
-    // if (debugRssFeed) {
-    //   debugPrint(
-    //       "informationList.add: ${lastLogin.difference(postDate).inDays} : $feedCounter");
-    // }
+      // if (debugRssFeed) {
+      //   debugPrint("feed.items: ${rss.title}:${rss.link}");
+      // debugPrint("feed.items: ${rss.text}:${rss.category}");
+      // }
 
-    if ((lastLogin.difference(postDate).inDays > maxFeedDuration) ||
-        (feedCounter > minFeedCount)) {
-      break;
+      // ここで英訳必要フラグをつける
+      // launch_url.dart で起動ブラウザの区分に利用
+      if (translateSite.contains(url)) {
+        rss = rss.copyWith(lang: "Eng");
+      }
+
+      informationList.add(rss);
+      // 投稿日を確認する
+      postDate = item.updated as DateTime;
+      // if (debugRssFeed) {
+      //   debugPrint(
+      //       "informationList.add: $postDate: ${lastLogin.difference(postDate).inDays} : $feedCounter");
+      // }
+
+      if ((lastLogin.difference(postDate).inDays > maxFeedDuration) ||
+          (feedCounter > minFeedCount)) {
+        break;
+      }
+      feedCounter++;
     }
-    feedCounter++;
+  }
+  // RSS処理
+  // 取得したRSS/XMLをParseにかけて分解
+  else {
+    var feed = RssFeed.parse(utf8.decode(response.bodyBytes));
 
-    // debugPrint(
-    //     "duration: ${lastLogin.difference(postDate).inDays},counter $feedCounter");
+    //   itemsの個別データ分解
+    for (var item in feed.items!) {
+      // if (debugRssFeed) {
+      //   debugPrint("feed.items: ${item.title}:${item.link}");
+      //   debugPrint("feed.items: ${item.title}:${item.description}");
+      // }
+      // Feedを個別構造に分解する
+      informationList.add(RssInformation.fromFeed(item));
 
-    // if (debugRssFeed) {
-    //   debugPrint("item author: ${item.author}");
-    //   debugPrint("item categories: ${item.categories?.toList().toString()}");
-    //   debugPrint("item comments: ${item.comments}");
-    //   debugPrint("item content: ${item.content?.value}");
-    //   debugPrint("item dc subject【 ${item.dc?.subject}】");
-    //   debugPrint("item dc creater: ${item.dc?.creator}");
-    //   debugPrint("item description: ${item.description}");
-    //   debugPrint("item guid: ${item.guid}");
-    //   debugPrint("item link: ${item.link}");
-    //   debugPrint("item title: ${item.title}");
-    //   debugPrint("item pubDate: ${item.pubDate.toString()}");
-    //   debugPrint("item source: ${item.source.toString()}");
-    //   debugPrint("item media: ${item.media.toString()}");
-    //   debugPrint("item enclosure: ${item.enclosure.toString()}");
-    // }
+      postDate = item.dc?.date;
+
+      // 最大定義期間までしか取り込まない
+      // LastLoginから規定(30日)以内で、規定内件数以内である
+
+      if (item.dc?.date == null) {
+        postDate = item.pubDate!;
+        // 25を0025年と解釈するバグに対応,さらにmonth/dayのズレを謎の方法で解消
+        postDate = postDate.copyWith(
+            year:
+                postDate.year < 2000 ? postDate.year + 2000 : postDate.year + 0,
+            month: postDate.month + 0,
+            day: postDate.day + 0);
+      } else {
+        postDate = item.dc?.date as DateTime;
+      }
+
+      // ここで英訳必要フラグをつける
+      // launch_url.dart で起動ブラウザの区分に利用
+      if (translateSite.contains(url)) {
+        final RssInformation copyinfo = informationList.last;
+        informationList.last = copyinfo.copyWith(lang: "Eng");
+        // debugPrint("postDate?  ${item.pubDate.toString()}");
+      }
+
+      // if (debugRssFeed) {
+      //   debugPrint(
+      //       "informationList.add: $postDate: ${lastLogin.difference(postDate).inDays} : $feedCounter");
+      // }
+
+      if ((lastLogin.difference(postDate).inDays > maxFeedDuration) ||
+          (feedCounter > minFeedCount)) {
+        break;
+      }
+      feedCounter++;
+
+      // debugPrint(
+      //     "duration: ${lastLogin.difference(postDate).inDays},counter $feedCounter");
+
+      // if (debugRssFeed) {
+      //   debugPrint("item author: ${item.author}");
+      //   debugPrint("item categories: ${item.categories?.toList().toString()}");
+      //   debugPrint("item comments: ${item.comments}");
+      //   debugPrint("item content: ${item.content?.value}");
+      //   debugPrint("item dc subject【 ${item.dc?.subject}】");
+      //   debugPrint("item dc creater: ${item.dc?.creator}");
+      //   debugPrint("item description: ${item.description}");
+      //   debugPrint("item guid: ${item.guid}");
+      //   debugPrint("item link: ${item.link}");
+      //   debugPrint("item title: ${item.title}");
+      //   debugPrint("item pubDate: ${item.pubDate.toString()}");
+      //   debugPrint("item source: ${item.source.toString()}");
+      //   debugPrint("item media: ${item.media.toString()}");
+      //   debugPrint("item enclosure: ${item.enclosure.toString()}");
+      // }
+    }
   }
   //   デバッグ確認
   // if (debugRssFeed || debugCache) {
@@ -197,5 +259,6 @@ Future<List<RssInformation>> rssStreaming(String url) async {
   // Cacheに追加
   cacheManeger.addRssCache(url, informationList);
   // リストを返す
-  return Future<List<RssInformation>>.value(informationList);
+  // return Future<List<RssInformation>>.value(informationList);
+  return informationList;
 }

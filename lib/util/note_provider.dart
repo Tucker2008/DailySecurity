@@ -11,6 +11,10 @@ class NoteProvider {
 
   String _noteMsg = "";
 
+  bool isEmpty() {
+    return _noteMsg.isEmpty;
+  }
+
   String getNote() {
     final retMsg = _noteMsg;
     _noteMsg = "";
@@ -19,9 +23,5 @@ class NoteProvider {
 
   void setNote(String notice) {
     _noteMsg = notice;
-  }
-
-  bool getStatus() {
-    return _noteMsg.isNotEmpty;
   }
 }

@@ -251,9 +251,9 @@ class PushNotificationService {
     importance: Importance.max,
   );
 
-  // 
+  //
   // デバッグ用に通知を内部発行させる
-  // 
+  //
   void debugMessageProc() {
     const AndroidNotification an = AndroidNotification(
         tag: 'campaign_collapse_key_4790335902582931187',

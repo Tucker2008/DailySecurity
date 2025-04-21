@@ -50,15 +50,15 @@ class FontSize {
   }
 }
 
-  // 元のサイズ定義
-  // final double headLineH4 = 34.0;
-  // final double headlineH5 = 24.0;
-  // final double headlineH6 = 20.0;
-  // final double subTitle1 = 16.0;
-  // final double subTitle2 = 14.0;
-  // final double body1 = 16.0;
-  // final double body2 = 14.0;
-  // final double button = 14.0;
-  // final double caption = 12.0;
-  // final double oberline = 10.0;
-  // final double menu = 9.5; // NewsPicsベンチマーク値
+// 元のサイズ定義
+// final double headLineH4 = 34.0;
+// final double headlineH5 = 24.0;
+// final double headlineH6 = 20.0;
+// final double subTitle1 = 16.0;
+// final double subTitle2 = 14.0;
+// final double body1 = 16.0;
+// final double body2 = 14.0;
+// final double button = 14.0;
+// final double caption = 12.0;
+// final double oberline = 10.0;
+// final double menu = 9.5; // NewsPicsベンチマーク値

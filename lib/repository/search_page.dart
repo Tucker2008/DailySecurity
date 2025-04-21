@@ -1,6 +1,6 @@
-import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
 import 'package:cyber_interigence/util/bookmark_provider.dart';
+import 'package:cyber_interigence/util/note_provider.dart';
 import 'package:cyber_interigence/util/widget_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,19 +8,21 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //
-// アプリ内でWebページを表示する
+// アプリ内で検索結果を表示する
+// ※2025/4/20
+// ※この方式ではうまく行かないので、検索エンジン含め作り直し
 //
-class WebPage extends ConsumerStatefulWidget {
-  const WebPage({super.key, required this.rss});
+class SearchPage extends ConsumerStatefulWidget {
+  const SearchPage({super.key, this.searchWord});
 
-  final RssInformation rss;
+  final String? searchWord;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _WebPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => SearchPageState();
 }
 
-class _WebPageState extends ConsumerState<WebPage> {
-  RssInformation? rss;
+class SearchPageState extends ConsumerState<SearchPage> {
+  String? searchWord;
   String url = "";
   double _progress = 0.0;
   bool _isFirst = true;
@@ -81,14 +83,13 @@ class _WebPageState extends ConsumerState<WebPage> {
     if (_isFirst) {
       // 初回フラグを下ろす
       _isFirst = false;
-      // 引数のRSSを取り出す
-      rss = widget.rss;
+      // 引数の検索語を取得
+      searchWord = widget.searchWord ?? NoteProvider().getNote();
       // 指定URLを取得
-      url = widget.rss.link!;
+      url =
+          "https://www.google.co.jp/search?hl=ja&sitesearch=https%3A%2F%2Faokabi.way-nifty.com%2F&q=インシデント&btng=$searchWord";
       // URLをコントローラに設定
       controller.loadRequest(Uri.parse(url));
-      // 指定コンテナを受領
-      setDividerContainer(WidgetProvider().getWidget());
 
       // BookMarkProviderにWatch定義
       // Map<String, RssInformation> bookmarkMap = ref.watch(bookmarkProvider);
@@ -97,7 +98,7 @@ class _WebPageState extends ConsumerState<WebPage> {
     }
 
     return Scaffold(
-      appBar: AppbarConstant().getBookmarkedAppbarConstant(url, rss!, ref, context),
+      appBar: AppbarConstant().getAppbarConstant(context),
       // body WebPage
       body: SafeArea(
         child: Column(

@@ -1,15 +1,12 @@
 // ポストされた投稿のカテゴリを判別するテーブル
 // ニュースのカテゴリもここで定義
 //
+import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:flutter/material.dart';
 
 //
 // ニュースカテゴリ定義
 //
-const ipaCategory = "ipa";
-const jvnCategory = "jvn";
-const jcrCategory = "jcr";
-
 const newsCategory = "news";
 const columnCategory = "column";
 
@@ -72,14 +69,27 @@ bool iconAvalable(String category) {
 }
 
 ImageProvider<Object> postCategotyImageicon(String category) {
-  switch (category) {
-    case ipaCategory:
-      return const AssetImage('images/ipa_logo.png');
-    case jvnCategory:
-      return const AssetImage('images/jvn_logo.png');
-    case jcrCategory:
-      return const AssetImage('images/jcr_logo.png');
-    default:
-      return const AssetImage('images/ipa_logo.png');
+  const basePath = 'images/logo';
+
+  if (categoryIconMap.containsKey(category)) {
+    return AssetImage('$basePath/${categoryIconMap[category]}');
   }
+  return const AssetImage('$basePath/non_logo.png');
+
+  // switch (category) {
+  //   case ipaCategory:
+  //     return const AssetImage('images/ipa_logo.png');
+  //   case jvnCategory:
+  //     return const AssetImage('images/jvn_logo.png');
+  //   case jcrCategory:
+  //     return const AssetImage('images/jcr_logo.png');
+  //   case cisCategory:
+  //     return const AssetImage('images/cis_logo.png');
+  //   case ncsCategory:
+  //     return const AssetImage('images/ncs_logo.png');
+  //   case fisCategory:
+  //     return const AssetImage('images/fis_logo.png');
+  //   default:
+  //     return const AssetImage('images/non_logo.png');
+  // }
 }

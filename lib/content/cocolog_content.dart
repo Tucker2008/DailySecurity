@@ -72,6 +72,7 @@ class CocologContent extends ConsumerWidget {
         targetUrl,
         rssInfo!,
         ref,
+        context,
       ),
       // DisplayEntry合体
       body: SafeArea(

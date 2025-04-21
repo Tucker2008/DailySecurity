@@ -37,7 +37,7 @@ Widget newsContainer(
       null,
       context,
       item,
-      null,null,
+      null, null,
       postCategotyImageicon(item.category!),
     ));
   }
@@ -100,15 +100,15 @@ Widget newsContainer(
                 },
               ),
               const Spacer(),
-              // ブックマークへ誘導
+              // // 2025.4.17 ブックマークへ誘導 から国内ニュースページへ変更
               GestureDetector(
                 child: Icon(
-                  Icons.bookmark_outline,
+                  Icons.newspaper,
                   size: sizeConfig.tileIconSize,
                 ),
                 onTap: () {
                   // スクリーン番号をセットして
-                  ScreenProvider().setScreen(bookmarkPageNum);
+                  ScreenProvider().setScreen(newsMainPageNum);
                   // ページを呼ぶ
                   // このページの呼び方ではスタックしないので行ったきりに出来る
                   // Thanks to StackOverflow

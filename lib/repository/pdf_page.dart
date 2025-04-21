@@ -46,7 +46,7 @@ class _PdfPageState extends ConsumerState<PdfPage> {
     }
 
     return Scaffold(
-      appBar: AppbarConstant().getAppbarConstant(),
+      appBar: AppbarConstant().getAppbarConstant(context),
       // body WebPage
       body: SafeArea(
         child: Column(

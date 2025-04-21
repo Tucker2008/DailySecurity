@@ -1,8 +1,8 @@
 import 'package:cyber_interigence/constant/feed_constant.dart';
 import 'package:cyber_interigence/global.dart';
-import 'package:cyber_interigence/pages/bookmark_page.dart';
 import 'package:cyber_interigence/pages/cocolog_page.dart';
 import 'package:cyber_interigence/pages/cycle_screen.dart';
+import 'package:cyber_interigence/pages/foreign_news_page.dart';
 import 'package:cyber_interigence/pages/setting_screen.dart';
 import 'package:cyber_interigence/pages/entrance_screen.dart';
 import 'package:cyber_interigence/pages/news_main_page.dart';
@@ -27,8 +27,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       argCategory: "column",
     ),
     CycleScreen(),
-    NewsMainPage(),
-    BookmarkPage(),
+    NewsMainPage(
+      arg: false,
+    ),
+    ForeignNewsPage(),
   ];
 
   // 選択されたスクリーン番号
@@ -49,7 +51,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       // AppBar ロゴを表示するだけ ----------------
-      appBar: AppbarConstant().getAppbarConstant(),
+      appBar: AppbarConstant().getAppbarConstant(context),
       // 設定ページはDrawerへ格納
       drawer: settingsDrawer(context),
       // ボディ本体はメニュー選択機能
@@ -134,18 +136,18 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               label: mainMenuNews,
               tooltip: newsFeedTitle,
             ),
-            // ブックマークページ(BookMarkPage)
+            // 海外ニュースページ (2025.4.17)
             NavigationDestination(
               icon: Icon(
-                Icons.bookmark_outline,
+                Icons.book_online_outlined,
                 size: sizeConfig.mainMenuIconSize,
               ),
               selectedIcon: Icon(
-                Icons.bookmark,
+                Icons.book_online,
                 size: sizeConfig.mainMenuIconSize,
               ),
-              label: mainMenuBookmark,
-              tooltip: bookmarkTitle,
+              label: mainMenuForignNews,
+              tooltip: forignNewsTitle,
             ),
           ],
         ),

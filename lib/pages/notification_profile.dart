@@ -31,7 +31,7 @@ class NotificationProfile extends ConsumerWidget {
     final switchNotifier = ref.read(profSwitchProvider.notifier);
 
     return Scaffold(
-      appBar: AppbarConstant().getAppbarConstant(),
+      appBar: AppbarConstant().getAppbarConstant(context),
 
       // 本体設定画面
       body: Container(

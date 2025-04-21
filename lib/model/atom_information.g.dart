@@ -1,32 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'rss_information.dart';
+part of 'atom_information.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$RssInformationImpl _$$RssInformationImplFromJson(Map<String, dynamic> json) =>
-    _$RssInformationImpl(
+_$AtomInformationImpl _$$AtomInformationImplFromJson(
+        Map<String, dynamic> json) =>
+    _$AtomInformationImpl(
       date: json['date'] as String,
       title: json['title'] as String,
       text: json['text'] as String,
       link: json['link'] as String? ?? "",
-      imageUrl: json['imageUrl'] as String? ?? "",
       category: json['category'] as String? ?? "",
-      bookmarked: json['bookmarked'] as bool? ?? false,
-      lang: json['lang'] as String? ?? "",
     );
 
-Map<String, dynamic> _$$RssInformationImplToJson(
-        _$RssInformationImpl instance) =>
+Map<String, dynamic> _$$AtomInformationImplToJson(
+        _$AtomInformationImpl instance) =>
     <String, dynamic>{
       'date': instance.date,
       'title': instance.title,
       'text': instance.text,
       'link': instance.link,
-      'imageUrl': instance.imageUrl,
       'category': instance.category,
-      'bookmarked': instance.bookmarked,
-      'lang': instance.lang,
     };

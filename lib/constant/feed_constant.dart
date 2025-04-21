@@ -17,13 +17,15 @@ const newsArticleTitle = "インシデントから学ぶ";
 const bookmarkTitle = "ブックマーク一覧";
 const bookmarkTitle1 = "気になる記事を保存";
 const reminderTitle = 'セキュリティリマインダーです';
+const forignNewsTitle = '海外のセキュリティニュース';
 
 // mainメニューの文字列
 const mainMenuHome = "ホーム";
 const mainMenuNews = "ニュース";
 const mainMenuArticle = "インシデント";
-const mainMenuBookmark = "ブックマーク";
+// const mainMenuBookmark = "ブックマーク";
 const mainMenuReminder = 'リマインダー';
+const mainMenuForignNews = "海外ニュース";
 
 // cycle_containerの文字列
 const reminderWinupdateTitle = "Windows Updateの実施";

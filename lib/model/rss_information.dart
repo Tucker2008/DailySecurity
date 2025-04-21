@@ -23,6 +23,7 @@ class RssInformation with _$RssInformation {
     @Default("") String? imageUrl, // イメージファイルのURL（将来実装）
     @Default("") String? category, // カテゴリ（投稿、ニュースソース）
     @Default(false) bool bookmarked, // ブックマークされているか？
+    @Default("") String? lang, // 言語：翻訳を必要とするか否かのフラグ
   }) = _RssInformation;
 
   // Cocologコンテンツ用の改造版
@@ -30,7 +31,9 @@ class RssInformation with _$RssInformation {
     return RssInformation(
       // メモ：このdateはUTC化されているのでLocalizationして+9する必要がある
       date: feed.dc!.date == null
-          ? "N/A"
+          ? (feed.pubDate != null
+              ? DateFormat('20yy/MM/dd(E)').format(feed.pubDate!.toLocal())
+              : "N/A")
           : DateFormat('yyyy/MM/dd(E)').format(feed.dc!.date!.toLocal()),
       title: feed.title == null ? "N/A" : feed.title.toString(),
       text: feed.description == null ? "N/A" : feed.description.toString(),
