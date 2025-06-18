@@ -12,7 +12,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # 1.0.4+5: 再リジェクト対応版(project: Build5)：AppStore通過済
 # 1.0.5+6: Androidリリース版(project: Build6)
 # 1.0.6+7: project: Build7 (ニュースソース追加／英訳機能追加)
-version: 1.0.6+7
+# 1.0.6+8: トップニュースをIPAに変更。一部バグ対応
+version: 1.0.6+8
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -47,6 +48,7 @@ dependencies:
   package_info_plus: 
   flutter_inappwebview: 
   share_plus: 
+  flutter_html: 
 
   # 特記事項
   # 

@@ -101,7 +101,8 @@ class EntranceScreenState extends ConsumerState<EntranceScreen> {
     activity.when(
       data: (data) {
         informationList = data;
-        newsList = filteringList(informationList, "news", entranceArticle)!;
+        // トップニュースをCocologのnewsカテゴリからJpcertへ変更(2025.6.18)
+        // newsList = filteringList(informationList, "news", entranceArticle)!;
         columnList = filteringList(informationList, "column", entranceArticle)!;
       },
       error: (error, stacktrace) => noteProvider.setNote(error.toString()),
@@ -115,6 +116,8 @@ class EntranceScreenState extends ConsumerState<EntranceScreen> {
       return splashScreen(context);
     } else {
       publicNewsList = meargeNews(4)!;
+      // トップニュースをCocologのnewsカテゴリからJpcertへ変更(2025.6.18)
+      newsList = meargeTopNews(0)!;
     }
 
     //ここまでRSS取得関連-----------

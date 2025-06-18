@@ -12,6 +12,7 @@ import 'package:webfeed_plus/webfeed_plus.dart';
 
 //
 // 必要な全てのRSSを読んで、cocologのRSSInformationを返す
+// 起動時に必要なニュース系RSSも同時に読む
 //
 Future<List<RssInformation>> allRssStreaming(String url) async {
   List<RssInformation>? rsss = [];
@@ -20,14 +21,14 @@ Future<List<RssInformation>> allRssStreaming(String url) async {
     rsss = value;
   });
   // debugPrint("allRssStreaming: before");
-  await startNewsRssStreaming("");
+  await startNewsRssStreaming();
   return Future<List<RssInformation>>.value(rsss);
 }
 
 //
 // 起動最初に必要な全てのニュース系RSSを読む
 //
-Future<List<RssInformation>> startNewsRssStreaming(String url) async {
+Future<List<RssInformation>> startNewsRssStreaming() async {
   List<RssInformation> rsss = [];
   for (var rss in startRssUrls.keys) {
     // debugPrint("startNewsRssStreaming: $rss");
@@ -46,7 +47,7 @@ Future<List<RssInformation>> startNewsRssStreaming(String url) async {
 //
 // ニュース画面に必要な追加のニュース系RSSを読む
 //
-Future<List<RssInformation>> allNewsRssStreaming(String url) async {
+Future<List<RssInformation>> allNewsRssStreaming() async {
   List<RssInformation> rsss = [];
   for (var rss in rssUrls.keys) {
     // debugPrint("allNewsRssStreaming: $rss");

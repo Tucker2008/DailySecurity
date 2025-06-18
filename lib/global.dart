@@ -39,3 +39,4 @@ final sizeConfig = SizeConfig();
 // bool debugOnboard = false; // 起動１回目の画面デバッグ用
 // bool debugAsync = false; // 投稿取得同期のデバッグ
 // bool debugCache = false; // RSSリーダ機能のデバッグ
+bool debugEntryDetails = false; // cocologエントリの中身のデバッグ

@@ -54,6 +54,10 @@ final Map<int, IconData> postCategoryIconMap = {
   // notAvailableIndex: Icons.web_stories_outlined,
 };
 
+// 以下はココログ記事のカテゴリごとのアイコンイメージ処理
+// postCategoryMapはココログ記事毎の定義
+//
+// ニュースカテゴリアイコンがあるか？
 IconData postCategoryIcon(String categoryString) {
   if (iconAvalable(categoryString)) {
     final indexNum = postCategoryMap[categoryString];
@@ -68,6 +72,15 @@ bool iconAvalable(String category) {
   return postCategoryMap.containsKey(category);
 }
 
+// 以下はニュースソースのアイコンイメージ処理
+// categoryIconMap　はニュースカテゴリ毎の定義
+//
+// ニュースカテゴリアイコンがあるか？
+bool postCategoryIconAvalable(String category) {
+  return categoryIconMap.containsKey(category);
+}
+
+// ニュースカテゴリアイコンがあれば返すが、ない場合は適当なものを返す
 ImageProvider<Object> postCategotyImageicon(String category) {
   const basePath = 'images/logo';
 

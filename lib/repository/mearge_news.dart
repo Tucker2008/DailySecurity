@@ -17,6 +17,14 @@ List<RssInformation>? meargeForeignNews(int max) {
   return _multiMeargeNews(max, foreignRssUrls);
 }
 
+// EntranceScreenトップニュースに表示するニュース(2025.6.18)
+List<RssInformation>? meargeTopNews(int max) {
+  return _multiMeargeNews(max, topNewsRssUrls);
+}
+
+// URLのマップに従ってキャッシュからRSSinformation群を取り出す
+// 上限件数とソートを実施する（上限なしなら0とする）
+// 
 List<RssInformation>? _multiMeargeNews(int max, Map<String, String> urlMap) {
   List<RssInformation> margeList = [];
   List<RssInformation> margedList = [];

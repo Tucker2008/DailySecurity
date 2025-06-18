@@ -1,5 +1,6 @@
 import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:cyber_interigence/content/cocolog_content.dart';
+import 'package:cyber_interigence/content/ipa_content.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/pdf_page.dart';
 import 'package:cyber_interigence/repository/web_page_inappview.dart';
@@ -66,6 +67,19 @@ void launchUrlByRss(BuildContext context, RssInformation rss) {
         ),
       );
     }
+
+    // IPAだったらIpaContent()を呼ぶ
+    if (Uri.parse(url).host == ipaHost) {
+      // urlProvider.setUrl(url);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => IpaContent(
+            ipaRss: rss,
+          ),
+        ),
+      );
+    }
+
     // Cocologコンテンツでなければそのまま表示する
     // PDFの場合は別のviewerを起動する
     // 特にAndroidの場合はPDFを表示出来ない

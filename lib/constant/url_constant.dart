@@ -2,6 +2,7 @@
 // 取り込むURL定義
 // IPAのセキュリティアラート
 const ipaRss = "https://www.ipa.go.jp/security/alert-rss.rdf";
+const ipaHost = "www.ipa.go.jp";
 
 // JVNの脆弱性情報
 const jvnRss = "https://jvn.jp/rss/jvnJP.rdf";
@@ -56,6 +57,11 @@ const Map<String, String> startRssUrls = {
   ipaRss: ipaCategory,
   jvnRss: jvnCategory,
   jpcertRss: jcrCategory,
+};
+
+// アプリスタート時に必ず読むニュース
+const Map<String, String> topNewsRssUrls = {
+  ipaRss: ipaCategory,
 };
 
 // 海外ニュースサイト
@@ -114,7 +120,7 @@ const jvnName = "JVN（脆弱性対策情報ポータルサイト）の重要な
 // ニュース共通
 const webTitle =
     "IPA（情報処理推進機構）をはじめとする国内のセキュリティ情報サイト、及び海外の情報セキュリティ関連サイトのページを表示しています";
-  // "IPA（情報処理推進機構）、JPCERT/CC（JPCERTコーディネーションセンター）、JVN（脆弱性対策情報ポータルサイト）のページを表示しています";
+// "IPA（情報処理推進機構）、JPCERT/CC（JPCERTコーディネーションセンター）、JVN（脆弱性対策情報ポータルサイト）のページを表示しています";
 
 // 利用規約やプライバシーポリシーページ
 const privercyPage =

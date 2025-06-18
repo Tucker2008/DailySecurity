@@ -38,7 +38,7 @@ class NewsMainPage extends ConsumerWidget {
   // Providerの定義（RSS読み込み関数をまるごとProvider定義）
   final feedProvider = FutureProvider.autoDispose
       .family<List<RssInformation>, String>((ref, url) async {
-    return allNewsRssStreaming(url);
+    return allNewsRssStreaming();
   });
 
   @override

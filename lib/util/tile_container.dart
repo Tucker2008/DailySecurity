@@ -4,6 +4,7 @@ import 'package:cyber_interigence/global.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/pages/main_screen.dart';
 import 'package:cyber_interigence/repository/launch_url.dart';
+import 'package:cyber_interigence/util/post_category.dart';
 import 'package:cyber_interigence/util/screen_provider.dart';
 import 'package:flutter/material.dart';
 
@@ -55,6 +56,12 @@ Widget simpleTileContainer(BuildContext context, RssInformation rssInfo,
   final colorChoiceCircle = Random(DateTime.now().microsecond).nextInt(10) %
       _onPrimaryColorTable.length;
   final titleString = rssInfo.title;
+  // アイコンイメージがある場合には、そのアイコンを表示(2025.6.18)
+  // トップニュースにJpcert記事を展開したので文字では同じになってしまうため
+  // postCategoryIconAvalableは、ニュース系とココログ記事系を分けているので注意
+  final iconImage = postCategoryIconAvalable(rssInfo.category!)
+      ? postCategotyImageicon(rssInfo.category!)
+      : null;
 
   return GestureDetector(
     child: Stack(
@@ -102,13 +109,19 @@ Widget simpleTileContainer(BuildContext context, RssInformation rssInfo,
             ),
             child: CircleAvatar(
               radius: (sizeConfig.tileCircleWidth! / 2),
-              child: Text(
-                _getDirstCharacter(titleString),
-                style: TextStyle(
-                  fontSize: 24.0 * sizeConfig.screenWidthTimes!,
-                  color: _onPrimaryColorTable[colorChoiceCircle],
-                ),
-              ),
+              child: (iconImage == null)
+                  ? Text(
+                      _getFirstCharacter(titleString),
+                      style: TextStyle(
+                        fontSize: 24.0 * sizeConfig.screenWidthTimes!,
+                        color: _onPrimaryColorTable[colorChoiceCircle],
+                      ),
+                    )
+                  : CircleAvatar(
+                      backgroundImage: iconImage,
+                      radius:
+                          24.0 * (sizeConfig.screenWidthTimes!), //ここは半径を指定する
+                    ),
             ),
           ),
         ),
@@ -168,7 +181,7 @@ Widget containerTileContainer(BuildContext context, Widget content,
             child: CircleAvatar(
               radius: (sizeConfig.tileCircleWidth! / 2),
               child: Text(
-                _getDirstCharacter(titleString),
+                _getFirstCharacter(titleString),
                 style: TextStyle(
                   fontSize: 24.0 * sizeConfig.screenWidthTimes!,
                   color: _onPrimaryColorTable[colorChoiceCircle],
@@ -285,7 +298,8 @@ Widget largeTileContainer(
 //
 // 左上のテキストアイコン用の文字に記号が入ってしまうのを避ける
 // 2025.2.2 from FirstFlight
-String _getDirstCharacter(String origin) {
+// 2025.6.18 Dirst->First タイプミス修正
+String _getFirstCharacter(String origin) {
   final firstStr = origin.substring(0, 1);
   // 最初がタイトルに出てきそうな記号だったら、それを除く
   if ((firstStr == "「") ||

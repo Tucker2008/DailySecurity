@@ -1,0 +1,2 @@
+/Volumes/HD/develop/StudioProjects/cyber_interigence/android/app/.cxx/RelWithDebInfo/4r141s3f/x86_64/CMakeFiles/edit_cache.dir
+/Volumes/HD/develop/StudioProjects/cyber_interigence/android/app/.cxx/RelWithDebInfo/4r141s3f/x86_64/CMakeFiles/rebuild_cache.dir
