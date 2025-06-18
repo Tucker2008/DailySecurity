@@ -151,7 +151,7 @@ class ForeignNewsPage extends ConsumerWidget {
                     height: 1.2,
                   ),
                   onTap: () {
-                    debugPrint('foreign_news URL: ${informationList[index]}');
+                    // debugPrint('foreign_news URL: ${informationList[index]}');
                     launchUrlByRss(context, informationList[index]);
                   },
                   textColor: Theme.of(context).colorScheme.onSurface,

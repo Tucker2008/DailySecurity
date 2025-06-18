@@ -58,6 +58,23 @@ class AppbarConstant {
     );
   }
 
+  // ブックマークページを呼ばない共通AppBar(2025.6.18)
+  PreferredSizeWidget getAppbarConstantNoBookmark(BuildContext? ctx) {
+    return PreferredSize(
+      // AppBarの大きさ指定
+      preferredSize: const Size.fromHeight(kToolbarHeight) *
+          (sizeConfig.screenWidthTimes!),
+      child: AppBar(
+        title: LogoProvider().getServiceLogo(),
+        centerTitle: true,
+        // ICONサイズ
+        iconTheme: IconThemeData(size: sizeConfig.mainMenuIconSize),
+        // ブックマークページは呼ばない
+      ),
+    );
+  }
+
+
   // ブックマーク付きAppBarを返す
   PreferredSizeWidget getBookmarkedAppbarConstant(
       String url, RssInformation? rss, WidgetRef ref, BuildContext? ctx) {
@@ -125,11 +142,15 @@ class AppbarConstant {
       BuildContext ctx, RssInformation rss) async {
     final box = ctx.findRenderObject() as RenderBox?;
     ShareResult shareResult;
-    shareResult = await Share.shareUri(
-        Uri.parse(
+    // 2025.5.14 SharePlusの使い方修正 合わせてFlutter3.7対応
+    shareResult = await SharePlus.instance.share(
+        ShareParams(
+          uri: Uri.parse(
           rss.link!,
         ),
-        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+        title: rss.title.isEmpty ? null: rss.title,
+        subject: rss.text.isEmpty ? null: rss.text,
+        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,),);
 
     final String msg =
         shareResult.status == ShareResultStatus.success ? "完了しました" : "失敗しました";

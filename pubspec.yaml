@@ -25,13 +25,13 @@ dependencies:
 
   # 特記事項
   # firebase関連のバージョンは1.0.0構築時に確認されたもの
-  cupertino_icons: ^1.0.6
+  cupertino_icons:  #^1.0.6
   http:
   intl: 
   webfeed_plus:
   html: 
-  firebase_core: ^3.8.1
-  firebase_messaging: ^15.1.6
+  firebase_core:  #^3.8.1
+  firebase_messaging:  #^15.1.6
   freezed_annotation: 
   shared_preferences: 
   google_fonts: 
@@ -62,7 +62,7 @@ dev_dependencies:
   flutter_native_splash:
 
   # The "flutter_lints" 
-  flutter_lints: ^3.0.0
+  flutter_lints:  #^3.0.0
 
 # The following section is specific to Flutter packages.
 flutter:

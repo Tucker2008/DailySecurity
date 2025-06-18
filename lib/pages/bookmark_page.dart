@@ -16,7 +16,9 @@ import 'package:cyber_interigence/global.dart';
 // ブックマークされた記事一覧画面
 //
 class BookmarkPage extends ConsumerWidget {
-  BookmarkPage({super.key,});
+  BookmarkPage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,126 +34,142 @@ class BookmarkPage extends ConsumerWidget {
     List<RssInformation> informationList =
         BookmarkManager().bookmarkStreaming();
 
-    // ブックマークリストがなければ利用方法を表示して終わり
-    if (!BookmarkManager().isNotEmpty()) {
-      return bookmarkIsEmptyContainer;
-    }
+    // if (!BookmarkManager().isNotEmpty()) {
+    //   return Scaffold(
+    //       // AppBar は main_screenにて対応済みの場合には出さず単独の時は出す
+    //       appBar: AppbarConstant().getAppbarConstant(context),
+    //       // コンテンツ内容一覧 ----------------
+    //       body: SingleChildScrollView(child: bookmarkIsEmptyContainer));
+    // }
 
     return Scaffold(
         // AppBar は main_screenにて対応済みの場合には出さず単独の時は出す
-        appBar: AppbarConstant().getAppbarConstant(context),
+        appBar: AppbarConstant().getAppbarConstantNoBookmark(context),
         // コンテンツ内容一覧 ----------------
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              // 説明やヘッダを入れる
-              bookmarkContainer,
-              //
-              // 記事一覧のRSS表示本体
-              //
-              ListView.builder(
-                itemCount: informationList.length,
+        // ブックマークリストがなければ利用方法を表示して終わり
+        // メニュー表示が必要なので、Scaffloldの下で分岐する(2025.6.18)
+        body: (!BookmarkManager().isNotEmpty())
+            ? bookmarkIsEmptyContainer
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // 説明やヘッダを入れる
+                    bookmarkContainer,
+                    //
+                    // 記事一覧のRSS表示本体
+                    //
+                    ListView.builder(
+                      itemCount: informationList.length,
 
-                scrollDirection: Axis.vertical, // スクロール方向を垂直に設定
-                reverse: false, // 順序を逆にしない
-                // リスト全体に8ピクセルの余白を追加
-                // padding: const EdgeInsets.all(8.0),
-                primary: true, // このリストがプライマリスクロールビューかどうかを指定
+                      scrollDirection: Axis.vertical, // スクロール方向を垂直に設定
+                      reverse: false, // 順序を逆にしない
+                      // リスト全体に8ピクセルの余白を追加
+                      // padding: const EdgeInsets.all(8.0),
+                      primary: true, // このリストがプライマリスクロールビューかどうかを指定
 
-                // 以下の2つの設定はSingleScrollView内でListViewを使う場合に必要
-                // shrinkWrap: false, // リストの高さをその内容に基づいて調整しない
-                // physics: const BouncingScrollPhysics(), // スクロール挙動を指定
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                addAutomaticKeepAlives: true, // 各アイテムが自動的に保持されるかどうかを指定
-                addRepaintBoundaries: true, // 各アイテムが再描画境界を持つかどうかを指定
-                addSemanticIndexes: true, // 各アイテムがセマンティックインデックスを持つかどうかを指定
+                      // 以下の2つの設定はSingleScrollView内でListViewを使う場合に必要
+                      // shrinkWrap: false, // リストの高さをその内容に基づいて調整しない
+                      // physics: const BouncingScrollPhysics(), // スクロール挙動を指定
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      addAutomaticKeepAlives: true, // 各アイテムが自動的に保持されるかどうかを指定
+                      addRepaintBoundaries: true, // 各アイテムが再描画境界を持つかどうかを指定
+                      addSemanticIndexes: true, // 各アイテムがセマンティックインデックスを持つかどうかを指定
 
-                itemBuilder: (context, index) {
-                  return Container(
-                    // margin: const EdgeInsets.symmetric(vertical: 1), // 4
-                    // 背景色と区切り線を定義
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerLow,
-                      // 上下のみに薄い線を入れる
-                      border: Border(
-                        bottom: BorderSide(
+                      itemBuilder: (context, index) {
+                        return Container(
+                          // margin: const EdgeInsets.symmetric(vertical: 1), // 4
+                          // 背景色と区切り線を定義
+                          decoration: BoxDecoration(
                             color: Theme.of(context)
                                 .colorScheme
-                                .secondaryContainer),
-                        // top: は入れない
-                      ),
-                    ),
-                    child: ListTile(
-                      // ヘッダ：日付
-                      // 記事右のBookmarkマークは日付の前に移動(2025.2.12)
-                      subtitle: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(informationList[index].date),
-                          SizedBox(
-                            width: fontSize.subTitle2,
+                                .surfaceContainerLow,
+                            // 上下のみに薄い線を入れる
+                            border: Border(
+                              bottom: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondaryContainer),
+                              // top: は入れない
+                            ),
                           ),
-                          bookmarkMap.containsKey(informationList[index].link!)
-                              ? Icon(Icons.bookmark,
-                                  size: fontSize.subTitle1,
-                                  color: Theme.of(context).colorScheme.primary)
-                              : SizedBox(
-                                  width: fontSize.subTitle1,
+                          child: ListTile(
+                            // ヘッダ：日付
+                            // 記事右のBookmarkマークは日付の前に移動(2025.2.12)
+                            subtitle: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(informationList[index].date),
+                                SizedBox(
+                                  width: fontSize.subTitle2,
                                 ),
-                        ],
-                      ),
+                                bookmarkMap.containsKey(
+                                        informationList[index].link!)
+                                    ? Icon(Icons.bookmark,
+                                        size: fontSize.subTitle1,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary)
+                                    : SizedBox(
+                                        width: fontSize.subTitle1,
+                                      ),
+                              ],
+                            ),
 
-                      subtitleTextStyle: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: fontSize.subTitle2,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      title: Text(
-                        informationList[index].title,
-                        // 長いタイトルを省略表示
-                        // overflow: TextOverflow.ellipsis,を行数を指定して使うとちょうどいい
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: titleLineMax,
-                      ),
-                      titleTextStyle: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: fontSize.subTitle1,
-                        color: Theme.of(context).colorScheme.onSurface,
-                        // 行間を少し狭く
-                        height: 1.2,
-                      ),
-                      onTap: () {
-                        // ページ表示
-                        launchUrlByRss(context, informationList[index]);
+                            subtitleTextStyle: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: fontSize.subTitle2,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                            title: Text(
+                              informationList[index].title,
+                              // 長いタイトルを省略表示
+                              // overflow: TextOverflow.ellipsis,を行数を指定して使うとちょうどいい
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: titleLineMax,
+                            ),
+                            titleTextStyle: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: fontSize.subTitle1,
+                              color: Theme.of(context).colorScheme.onSurface,
+                              // 行間を少し狭く
+                              height: 1.2,
+                            ),
+                            onTap: () {
+                              // ページ表示
+                              launchUrlByRss(context, informationList[index]);
+                            },
+                            textColor: Theme.of(context).colorScheme.onSurface,
+                            // カテゴリ毎のアイコン
+                            // カテゴリ指定がない場合だけにアイコンを表示する
+                            leading: (informationList[index]
+                                        .category!
+                                        .isNotEmpty &&
+                                    informationList[index].category! != "N/A")
+                                ? (iconAvalable(
+                                        informationList[index].category!)
+                                    ? Icon(
+                                        postCategoryIcon(
+                                            informationList[index].category!),
+                                        size:
+                                            32 * (sizeConfig.screenWidthTimes!),
+                                      )
+                                    : CircleAvatar(
+                                        backgroundImage: postCategotyImageicon(
+                                            informationList[index].category!),
+                                        radius: 16.0 *
+                                            (sizeConfig
+                                                .screenWidthTimes!), //ここは半径を指定する
+                                      ))
+                                : null,
+                            // 記事右のBookmarkマークは日付の前に移動(2025.2.12)
+                          ),
+                        );
                       },
-                      textColor: Theme.of(context).colorScheme.onSurface,
-                      // カテゴリ毎のアイコン
-                      // カテゴリ指定がない場合だけにアイコンを表示する
-                      leading: (informationList[index].category!.isNotEmpty &&
-                              informationList[index].category! != "N/A")
-                          ? (iconAvalable(informationList[index].category!)
-                              ? Icon(
-                                  postCategoryIcon(
-                                      informationList[index].category!),
-                                  size: 32 * (sizeConfig.screenWidthTimes!),
-                                )
-                              : CircleAvatar(
-                                  backgroundImage: postCategotyImageicon(
-                                      informationList[index].category!),
-                                  radius: 16.0 *
-                                      (sizeConfig
-                                          .screenWidthTimes!), //ここは半径を指定する
-                                ))
-                          : null,
-                      // 記事右のBookmarkマークは日付の前に移動(2025.2.12)
                     ),
-                  );
-                },
-              ),
-            ],
-          ),
-        )); // This trailing comma makes auto-formatting nicer for build methods.
+                  ],
+                ),
+              )); // This trailing comma makes auto-formatting nicer for build methods.
   }
 
   //

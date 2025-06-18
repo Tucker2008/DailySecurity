@@ -26,12 +26,13 @@ final boxDecortion = BoxDecoration(
   ),
   boxShadow: [
     BoxShadow(
-      color: Colors.black.withOpacity(0.2),
+      // Flutter3.7対応 withOpacity(0.5) -> withValues(alphe:0.5) -> withAlpha(255/2 = 128)
+      color: Colors.black.withAlpha(128),
       offset: const Offset(4, 4),
       blurRadius: 10,
     ),
     BoxShadow(
-      color: Colors.white.withOpacity(0.7),
+      color: Colors.white.withAlpha(180), // withOpacity(0.7),
       offset: const Offset(-4, -4),
       blurRadius: 10,
     ),
