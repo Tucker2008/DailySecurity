@@ -2,6 +2,7 @@ import 'package:cyber_interigence/constant/bookmark_constant.dart';
 import 'package:cyber_interigence/repository/bookmark_manager.dart';
 import 'package:cyber_interigence/repository/launch_url.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
+import 'package:cyber_interigence/theme/date_form.dart';
 import 'package:cyber_interigence/util/bookmark_provider.dart';
 import 'package:cyber_interigence/util/color_provider.dart';
 import 'package:cyber_interigence/util/post_category.dart';
@@ -99,9 +100,24 @@ class BookmarkPage extends ConsumerWidget {
                             subtitle: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text(informationList[index].date),
+                                // 翻訳マークを付ける 2025.6.20
+                                (informationList[index].lang!.isNotEmpty)
+                                    ? Icon(Icons.translate,
+                                        size: fontSize.subTitle2,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary)
+                                    : SizedBox(
+                                        width: fontSize.subTitle2,
+                                      ),
+                                // 空白サイズ縮小 subTitle2->caption  2026.5.20
                                 SizedBox(
-                                  width: fontSize.subTitle2,
+                                  width: fontSize.caption,
+                                ),
+                                Text(informationList[index].date),
+                                // 空白サイズ縮小 subTitle2->caption  2026.5.20
+                                SizedBox(
+                                  width: fontSize.caption,
                                 ),
                                 bookmarkMap.containsKey(
                                         informationList[index].link!)
@@ -145,7 +161,7 @@ class BookmarkPage extends ConsumerWidget {
                             leading: (informationList[index]
                                         .category!
                                         .isNotEmpty &&
-                                    informationList[index].category! != "N/A")
+                                    informationList[index].category! != dateFormNA)
                                 ? (iconAvalable(
                                         informationList[index].category!)
                                     ? Icon(
@@ -195,14 +211,14 @@ class BookmarkPage extends ConsumerWidget {
         Text(
           bookmarkTitle1,
           style: TextStyle(
-            // color: frontColor,
+            color: frontColor,
             fontSize: fontSize.subTitle2,
           ),
         ),
         Text(
           bookmarkTitle,
           style: TextStyle(
-              // color: frontColor,
+              color: frontColor,
               fontSize: fontSize.subTitle1,
               fontWeight: FontWeight.w700),
         ),

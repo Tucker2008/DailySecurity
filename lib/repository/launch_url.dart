@@ -69,7 +69,7 @@ void launchUrlByRss(BuildContext context, RssInformation rss) {
     }
 
     // IPAだったらIpaContent()を呼ぶ
-    if (Uri.parse(url).host == ipaHost) {
+    else if (Uri.parse(url).host == ipaHost) {
       // urlProvider.setUrl(url);
       Navigator.of(context).push(
         MaterialPageRoute(

@@ -137,13 +137,14 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               tooltip: newsFeedTitle,
             ),
             // 海外ニュースページ (2025.4.17)
+            // アイコンをtravel_exploreに変更
             NavigationDestination(
               icon: Icon(
-                Icons.book_online_outlined,
+                Icons.travel_explore_outlined,
                 size: sizeConfig.mainMenuIconSize,
               ),
               selectedIcon: Icon(
-                Icons.book_online,
+                Icons.travel_explore,
                 size: sizeConfig.mainMenuIconSize,
               ),
               label: mainMenuForignNews,

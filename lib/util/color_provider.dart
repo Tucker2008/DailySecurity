@@ -9,7 +9,7 @@ Color boxdecorationColor = Colors.black;
 Color borderColor = Colors.black;
 Color frontColor = Colors.white;
 
-// エラー受け渡し用
+// 固定コンテナ用のカラー設定クラス
 class ColorProvider {
   // クラス内インスタンス
   static final ColorProvider _instance = ColorProvider._();
@@ -21,9 +21,12 @@ class ColorProvider {
   }
 
   // displayFeedにわたすContainerの色指定をする
+  // 他コンテンツと色の差を付ける 2025.6.20
   void setContextColor(BuildContext context) {
-    boxdecorationColor = Theme.of(context).colorScheme.surfaceDim;
+    // boxdecorationColor = Theme.of(context).colorScheme.surfaceDim;
+    // frontColor = Theme.of(context).colorScheme.primary;
+    boxdecorationColor = Theme.of(context).colorScheme.primaryContainer;
+    frontColor = Theme.of(context).colorScheme.onPrimaryContainer;
     borderColor = Theme.of(context).colorScheme.secondaryContainer;
-    frontColor = Theme.of(context).colorScheme.primary;
   }
 }

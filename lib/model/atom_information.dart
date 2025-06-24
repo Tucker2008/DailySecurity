@@ -1,4 +1,5 @@
 // import 'package:flutter/foundation.dart';
+import 'package:cyber_interigence/theme/date_form.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:webfeed_plus/webfeed_plus.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -26,13 +27,13 @@ class AtomInformation with _$AtomInformation {
     return AtomInformation(
       // メモ：このdateはUTC化されているのでLocalizationして+9する必要がある
       date: feed.updated == null
-          ? "N/A"
-          : DateFormat('yyyy/MM/dd(E)').format(feed.updated!.toLocal()),
-      title: feed.title == null ? "N/A" : feed.title.toString(),
-      text: feed.summary == null ? "N/A" : feed.summary.toString(),
+          ? dateFormNA
+          : DateFormat(dateFormJp,dateFormLocale).format(feed.updated!.toLocal()),
+      title: feed.title == null ? dateFormNA : feed.title.toString(),
+      text: feed.summary == null ? dateFormNA : feed.summary.toString(),
       link: feed.links!.first.href, //linksの中身が取れているのでヨシ
       // カテゴリをdc領域から取得
-      category: (feed.categories == null) ? "N/A" : feed.categories.toString(),
+      category: (feed.categories == null) ? dateFormNA : feed.categories.toString(),
     );
   }
 

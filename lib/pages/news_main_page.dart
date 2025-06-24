@@ -1,6 +1,6 @@
 import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:cyber_interigence/global.dart';
-import 'package:cyber_interigence/methods/associate_methods.dart';
+// import 'package:cyber_interigence/methods/associate_methods.dart';
 import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/bookmark_manager.dart';
@@ -8,6 +8,7 @@ import 'package:cyber_interigence/repository/launch_url.dart';
 import 'package:cyber_interigence/repository/mearge_news.dart';
 import 'package:cyber_interigence/repository/rss_stream.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
+import 'package:cyber_interigence/theme/date_form.dart';
 import 'package:cyber_interigence/util/bookmark_provider.dart';
 import 'package:cyber_interigence/util/color_provider.dart';
 import 'package:cyber_interigence/util/note_provider.dart';
@@ -76,11 +77,11 @@ class NewsMainPage extends ConsumerWidget {
     Map<String, RssInformation> bookmarkMap = ref.watch(bookmarkProvider);
     bookmarkNotifier = ref.read(bookmarkProvider.notifier);
 
-    // 何かエラーが発生していたら表示
-    if (!noteProvider.isEmpty()) {
-      AssociateMethods associateMethods = AssociateMethods();
-      associateMethods.showSnackBarMsg(noteProvider.getNote(), context);
-    }
+    // 何かエラーが発生していたら表示 させるとクラッシュするのでコメントアウト(2025.6.19)
+    // if (!noteProvider.isEmpty()) {
+    //   AssociateMethods associateMethods = AssociateMethods();
+    //   associateMethods.showSnackBarMsg(noteProvider.getNote(), context);
+    // }
 
     // 画面build
     return Scaffold(
@@ -176,7 +177,7 @@ class NewsMainPage extends ConsumerWidget {
                       // カテゴリ毎のアイコン
                       // カテゴリ指定がない場合だけにアイコンを表示する
                       leading: (informationList[index].category!.isNotEmpty &&
-                              informationList[index].category! != "N/A")
+                              informationList[index].category! != dateFormNA)
                           ? (iconAvalable(informationList[index].category!)
                               ? Icon(
                                   postCategoryIcon(
@@ -220,8 +221,11 @@ class NewsMainPage extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          "$ipaName、$jpcertName、$jvnName、の$newsDetail",
+          // "$ipaName、$jpcertName、$jvnName、の$newsDetail",
+          // 説明が長すぎるので大幅に短縮 2025.6.19
+          newsDetail,
           style: TextStyle(
+            color: frontColor,
             fontSize: fontSize.subTitle2,
           ),
         ),
@@ -249,6 +253,7 @@ class NewsMainPage extends ConsumerWidget {
         Text(
           webTitle,
           style: TextStyle(
+            color: frontColor,
             fontSize: fontSize.oberline,
           ),
         ),

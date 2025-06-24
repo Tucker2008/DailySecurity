@@ -11,6 +11,7 @@ import 'package:cyber_interigence/repository/preference_manager.dart';
 import 'package:cyber_interigence/repository/push_notification_service.dart';
 import 'package:cyber_interigence/repository/rss_stream.dart';
 import 'package:cyber_interigence/repository/slide_tile_container.dart';
+import 'package:cyber_interigence/theme/date_form.dart';
 import 'package:cyber_interigence/util/note_provider.dart';
 import 'package:cyber_interigence/util/message_provider.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,7 @@ class EntranceScreenState extends ConsumerState<EntranceScreen> {
       setState(() {});
       // RssInfomationを作成（URLしか有効ではない）
       RssInformation rss = RssInformation(
-        date: DateFormat('yyyy/MM/dd(E)').format(DateTime.now()),
+        date: DateFormat(dateFormJp,dateFormLocale).format(DateTime.now()),
         title: "",
         text: "",
         link: MessageProvider().getMsg(),
@@ -118,6 +119,8 @@ class EntranceScreenState extends ConsumerState<EntranceScreen> {
       publicNewsList = meargeNews(4)!;
       // トップニュースをCocologのnewsカテゴリからJpcertへ変更(2025.6.18)
       newsList = meargeTopNews(0)!;
+      // インシデントニュースをCocologのColumnカテゴリに加える(2025.6.19)
+      columnList = meargeIncidentNews(entranceArticle, columnList)!;
     }
 
     //ここまでRSS取得関連-----------

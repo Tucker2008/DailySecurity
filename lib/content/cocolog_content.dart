@@ -1,6 +1,7 @@
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/cocolog_stream.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
+import 'package:cyber_interigence/theme/date_form.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -127,7 +128,7 @@ class CocologContent extends ConsumerWidget {
                               width: fontSize.caption,
                             ),
                             Text(
-                              "${DateFormat('y/M/d').format(postStructure.dateHeader)} 投稿記事",
+                              "${DateFormat(dateFormJp,dateFormLocale).format(postStructure.dateHeader)} 投稿記事",
                               style: TextStyle(
                                 fontSize: fontSize.caption,
                                 decoration: TextDecoration.none,

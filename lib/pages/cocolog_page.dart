@@ -1,8 +1,8 @@
 import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:cyber_interigence/repository/bookmark_manager.dart';
-// import 'package:cyber_interigence/repository/dialog_input.dart';
 import 'package:cyber_interigence/repository/launch_url.dart';
 import 'package:cyber_interigence/repository/mearge_news.dart';
+import 'package:cyber_interigence/theme/date_form.dart';
 import 'package:cyber_interigence/util/bookmark_provider.dart';
 import 'package:cyber_interigence/util/color_provider.dart';
 import 'package:cyber_interigence/repository/rss_stream.dart';
@@ -29,9 +29,11 @@ class CocologPage extends ConsumerWidget {
   final String argCategory;
 
   // Providerの定義（RSS読み込み関数をまるごとProvider定義）
+  // インシデント系ニュースも同時に読み込む(2025.6.19)
   final cocologProvider = FutureProvider.autoDispose
       .family<List<RssInformation>, String>((ref, url) async {
-    return rssStreaming(cocologRss);
+    // return rssStreaming(cocologRss);
+    return incidentRssStreaming(cocologRss);
   });
 
   // 取得したリストにブックマークされているかフラグを付ける
@@ -46,6 +48,7 @@ class CocologPage extends ConsumerWidget {
     final noteProvider = NoteProvider();
     // Webページ用のコンテナ初期化
     WidgetProvider().removeWidget();
+    bool loadFault = false;
 
     // ココログのコラム コンテナ作成(context引き渡しのため関数化)
     final Widget cocologColumnContainer = _makeCocologColumnContainer(context);
@@ -63,14 +66,21 @@ class CocologPage extends ConsumerWidget {
           informationList = data;
         }
       },
-      error: (error, stacktrace) => noteProvider.setNote(error.toString()),
+      error: (error, stacktrace) {
+        noteProvider.setNote(error.toString());
+        loadFault = true;
+      },
       loading: () => splashScreenNoContext(),
     );
 
     // IPA等のニュースマージが間に合わない場合にはぐるぐるを出す
-    if (informationList.isEmpty) {
+    if (informationList.isEmpty && (loadFault == false)) {
+      // debugPrint("ぐるぐる ${informationList.length} $loadFault ");
       return splashScreen(context);
     }
+
+    // Cocologコラムにインシデントニュース群を加えてマージする 2025.6.19
+    informationList = meargeIncidentNews(0, informationList)!;
 
     // Bookmark Providerのwatchを定義
     final bookmarkMap = ref.watch(bookmarkProvider);
@@ -168,9 +178,9 @@ class CocologPage extends ConsumerWidget {
                   textColor: Theme.of(context).colorScheme.onSurface,
                   // カテゴリ毎のアイコン
                   // カテゴリ指定がない場合だけにアイコンを表示する
+                  // 削除条件文：&&　argCategory.isEmpty 2026.6.19
                   leading: (informationList[index].category!.isNotEmpty &&
-                          informationList[index].category! != "N/A" &&
-                          argCategory.isEmpty)
+                          informationList[index].category! != dateFormNA)
                       ? (iconAvalable(informationList[index].category!)
                           ? Icon(
                               postCategoryIcon(
@@ -225,14 +235,14 @@ class CocologPage extends ConsumerWidget {
               Text(
                 cocologTitle1,
                 style: TextStyle(
-                  // color: frontColor,
+                  color: frontColor,
                   fontSize: fontSize.subTitle2,
                 ),
               ),
               Text(
                 cocologTitle2,
                 style: TextStyle(
-                    // color: frontColor,
+                    color: frontColor,
                     fontSize: fontSize.subTitle1,
                     fontWeight: FontWeight.w700),
               ),
@@ -284,14 +294,14 @@ class CocologPage extends ConsumerWidget {
         Text(
           cocologNews1,
           style: TextStyle(
-            // color: frontColor,
+            color: frontColor,
             fontSize: fontSize.subTitle2,
           ),
         ),
         Text(
           cocologNews2,
           style: TextStyle(
-              // color: frontColor,
+              color: frontColor,
               fontSize: fontSize.subTitle1,
               fontWeight: FontWeight.w700),
         ),

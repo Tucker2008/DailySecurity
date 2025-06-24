@@ -13,7 +13,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # 1.0.5+6: Androidリリース版(project: Build6)
 # 1.0.6+7: project: Build7 (ニュースソース追加／英訳機能追加)
 # 1.0.6+8: トップニュースをIPAに変更。一部バグ対応
-version: 1.0.6+8
+# 1.1.0+9: ニュースソースの多様化、バグ修正、日付表示統一
+version: 1.1.0+9
 
 environment:
   sdk: '>=3.4.3 <4.0.0'

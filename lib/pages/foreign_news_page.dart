@@ -1,6 +1,6 @@
 import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:cyber_interigence/global.dart';
-import 'package:cyber_interigence/methods/associate_methods.dart';
+// import 'package:cyber_interigence/methods/associate_methods.dart';
 import 'package:cyber_interigence/methods/splash_screen.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/bookmark_manager.dart';
@@ -64,10 +64,11 @@ class ForeignNewsPage extends ConsumerWidget {
     bookmarkNotifier = ref.read(bookmarkProvider.notifier);
 
     // 何かエラーが発生していたら表示
-    if (!noteProvider.isEmpty()) {
-      AssociateMethods associateMethods = AssociateMethods();
-      associateMethods.showSnackBarMsg(noteProvider.getNote(), context);
-    }
+    // ここで表示するとbuild中のエラー表示で停止するのでコメントアウト 2025.6.20
+    // if (!noteProvider.isEmpty()) {
+    //   AssociateMethods associateMethods = AssociateMethods();
+    //   associateMethods.showSnackBarMsg(noteProvider.getNote(), context);
+    // }
 
     // 画面build
     return Scaffold(
@@ -117,11 +118,24 @@ class ForeignNewsPage extends ConsumerWidget {
                   subtitle: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(informationList[index].date),
+                      // 翻訳マークを付ける 2025.6.20
+                      (informationList[index].lang!.isNotEmpty)
+                          ? Icon(Icons.translate,
+                              size: fontSize.subTitle1,
+                              color: Theme.of(context).colorScheme.primary)
+                          : SizedBox(
+                              width: fontSize.subTitle1,
+                            ),
+                      // 空白サイズ縮小 subTitle2->caption  2026.5.20
                       SizedBox(
-                        width: fontSize.subTitle2,
+                        width: fontSize.caption,
                       ),
-                      // Bookmarkマークは日付の前に移動(2025.2.12)
+                      Text(informationList[index].date),
+                      // 空白サイズ縮小 subTitle2->caption  2026.5.20
+                      SizedBox(
+                        width: fontSize.caption,
+                      ),
+                      // Bookmarkマークは日付の後に移動(2025.2.12)
                       bookmarkMap.containsKey(informationList[index].link!)
                           ? Icon(Icons.bookmark,
                               size: fontSize.subTitle2,
@@ -201,8 +215,9 @@ class ForeignNewsPage extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          "海外のセキュリティニュースサイトの$newsDetail",
+          "海外のニュースサイトの$newsDetail",
           style: TextStyle(
+            color: frontColor,
             fontSize: fontSize.subTitle2,
           ),
         ),
@@ -230,6 +245,7 @@ class ForeignNewsPage extends ConsumerWidget {
         Text(
           webTitle,
           style: TextStyle(
+            color: frontColor,
             fontSize: fontSize.oberline,
           ),
         ),

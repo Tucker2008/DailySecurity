@@ -15,6 +15,14 @@ const jpcertStartURL = "https://www.jpcert.or.jp";
 const cocologRss = "https://aokabi.way-nifty.com/blog/index.rdf";
 const cocologHost = "aokabi.way-nifty.com";
 
+// インシデントニュース関連フィード
+const itMediaRss = "https://rss.itmedia.co.jp/rss/2.0/news_security.xml";
+const scanNsRss = "https://scan.netsecurity.ne.jp/rss/index.rdf";
+const snextRss = "http://www.security-next.com/feed";
+// const mynaviRss =
+//     "http://feeds.journal.mycom.co.jp/rss/mycom/enterprise/security";
+const rboysRss = "https://rocket-boys.co.jp/feed/";
+
 // 海外サイトのRSS URL
 const cisaRss = "https://www.cisa.gov/news.xml";
 const ncscRss = "https://www.ncsc.gov.uk/api/1/services/v1/report-rss-feed.xml";
@@ -34,6 +42,12 @@ const ipaCategory = "ipa";
 const jvnCategory = "jvn";
 const jcrCategory = "jcr";
 const fisCategory = "fis";
+// インシデント　カテゴリ定義
+const itmCategory = "itm";
+const scnCategory = "scn";
+const sntCategory = "snt";
+// const mynCategory = "myn";
+const rbyCategory = "rby";
 // 海外サイト
 const cisCategory = "cis";
 const ncsCategory = "ncs";
@@ -46,7 +60,7 @@ const taoCategory = "tao";
 
 // post_category.dartにも同様の種類定義あり
 const Map<String, String> rssUrls = {
-  ipaRss: ipaCategory,
+  // ipaRss: ipaCategory,    IPAはTOPニュースに入れたので、ここでは入れない 2025.6.19
   jvnRss: jvnCategory,
   jpcertRss: jcrCategory,
   fishRss: fisCategory,
@@ -57,11 +71,26 @@ const Map<String, String> startRssUrls = {
   ipaRss: ipaCategory,
   jvnRss: jvnCategory,
   jpcertRss: jcrCategory,
+  // インシデント系ニュースも入れてみる 2026.6.19
+  itMediaRss: itmCategory,
+  scanNsRss: scnCategory,
+  snextRss: sntCategory,
+  // mynaviRss: mynCategory,
+  rboysRss: rbyCategory,
 };
 
-// アプリスタート時に必ず読むニュース
+// アプリスタート時に必ず読むTOPニュース
 const Map<String, String> topNewsRssUrls = {
   ipaRss: ipaCategory,
+};
+
+// インシデントニュース
+const Map<String, String> incidentRssUrls = {
+  itMediaRss: itmCategory,
+  scanNsRss: scnCategory,
+  snextRss: sntCategory,
+  // mynaviRss: mynCategory,
+  rboysRss: rbyCategory,
 };
 
 // 海外ニュースサイト
@@ -95,6 +124,12 @@ const Map<String, String> categoryIconMap = {
   jvnCategory: 'jvn_logo.png',
   jcrCategory: 'jcr_logo.png',
   fisCategory: 'fis_logo.png',
+  // インシデントニュースサイト系 後でロゴを設定
+  itmCategory: 'itm_logo.png',
+  scnCategory: 'scn_logo.png',
+  sntCategory: 'snt_logo.png',
+  // mynCategory: 'myn_logo.png',
+  rbyCategory: 'rby_logo.png',
   // 海外サイト系
   cisCategory: 'cis_logo.png',
   ncsCategory: 'ncs_logo.png',

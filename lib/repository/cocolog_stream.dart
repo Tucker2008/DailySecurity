@@ -44,6 +44,7 @@ final entryProvider = FutureProvider.autoDispose.family((ref, url) async {
   List<String> contentLinkHrefTmp = []; // 詳細説明（content_details）
   List<Uri> contentLinksTmp = []; // 参照リンク（content_links）
   try {
+    // date-headerフィールドから日付を取得する。parseしてDateTime型にいれる
     blogDate = DateFormat("y/M/d")
         .parse(document.getElementsByClassName("date-header")[0].innerHtml);
     // カテゴリ指定があればそれをカテゴリとする

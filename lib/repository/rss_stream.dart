@@ -12,7 +12,7 @@ import 'package:webfeed_plus/webfeed_plus.dart';
 
 //
 // 必要な全てのRSSを読んで、cocologのRSSInformationを返す
-// 起動時に必要なニュース系RSSも同時に読む
+// 起動時に必要なニュース系RSSも同時に読む:startRssUrls に定義されているニュースサイト
 //
 Future<List<RssInformation>> allRssStreaming(String url) async {
   List<RssInformation>? rsss = [];
@@ -21,45 +21,63 @@ Future<List<RssInformation>> allRssStreaming(String url) async {
     rsss = value;
   });
   // debugPrint("allRssStreaming: before");
-  await startNewsRssStreaming();
+  await startNewsRssStreaming().then((onValue) {}).whenComplete(() {
+    // debugPrint("startNewsRssStreaming:in allRssStreaming Complete!");
+  });
   return Future<List<RssInformation>>.value(rsss);
 }
 
 //
 // 起動最初に必要な全てのニュース系RSSを読む
-//
+// startRssUrls に定義されているニュースサイト
 Future<List<RssInformation>> startNewsRssStreaming() async {
   List<RssInformation> rsss = [];
-  for (var rss in startRssUrls.keys) {
-    // debugPrint("startNewsRssStreaming: $rss");
-    await rssStreaming(rss).then((value) {
-      rsss = value;
-    }).whenComplete(() {
-      // debugPrint("startNewsRssStreaming:Complete! $rss");
-    }).catchError((error) {
-      // debugPrint("startNewsRssStreaming:Error! $error $rss");
-      NoteProvider().setNote("startNewsRssStreaming:Error! $error $rss");
-    });
-  }
+  await _rssFetchByRssMap(startRssUrls).then((value) {
+    rsss = value;
+  }).catchError((error) {
+    debugPrint("startNewsRssStreaming:Error! $error");
+    NoteProvider().setNote("startNewsRssStreaming:Error! $error");
+  });
   return Future<List<RssInformation>>.value(rsss);
 }
 
 //
 // ニュース画面に必要な追加のニュース系RSSを読む
-//
+// rssUrlsに定義されている全ニュースサイト
 Future<List<RssInformation>> allNewsRssStreaming() async {
   List<RssInformation> rsss = [];
-  for (var rss in rssUrls.keys) {
-    // debugPrint("allNewsRssStreaming: $rss");
-    await rssStreaming(rss).then((value) {
-      rsss = value;
-    }).whenComplete(() {
-      // debugPrint("allNewsRssStreaming:Complete! $rss");
-    }).catchError((error) {
-      debugPrint("allNewsRssStreaming:Error! $error $rss");
-      NoteProvider().setNote("allNewsRssStreaming:Error! $error $rss");
-    });
-  }
+  await _rssFetchByRssMap(rssUrls).then((value) {
+    rsss = value;
+  }).catchError((error) {
+    debugPrint("allNewsRssStreaming:Error! $error");
+    NoteProvider().setNote("allNewsRssStreaming:Error! $error");
+  });
+  return Future<List<RssInformation>>.value(rsss);
+}
+
+//
+// 必要な全てのRSSを読んで、cocologのRSSInformationを返す
+// インシデント系RSSも同時に読む:startRssUrls に定義されているニュースサイト
+//
+Future<List<RssInformation>> incidentRssStreaming(String url) async {
+  List<RssInformation>? rsss = [];
+  List<RssInformation>? rssstub = [];
+  // ここはCocolog記事の読み込み
+  await rssStreaming(url).then((value) {
+    rsss = value;
+  }).whenComplete(() {
+    // debugPrint("incidentRssStreaming:$url complete! ${rsss!.length}");
+  });
+  // ここからインシデント系ニュース読み込み
+  await _rssFetchByRssMap(incidentRssUrls).then((value) {
+    rssstub = value;
+  }).catchError((error) {
+    debugPrint("incidentRssStreaming:Error! $error");
+    NoteProvider().setNote("incidentRssStreaming:Error! $error");
+  });
+
+  // ↓はダミー
+  rssstub!.clear();
   return Future<List<RssInformation>>.value(rsss);
 }
 
@@ -68,16 +86,30 @@ Future<List<RssInformation>> allNewsRssStreaming() async {
 //
 Future<List<RssInformation>> foreignNewsRssStreaming(String url) async {
   List<RssInformation> rsss = [];
-  for (var rss in foreignRssUrls.keys) {
-    await rssStreaming(rss)
-        .then((value) {
-          rsss = value;
-        })
-        .whenComplete(() {})
-        .catchError((error) {
-          debugPrint("foreignNewsRssStreaming:Error! $error $rss");
-          NoteProvider().setNote("foreignNewsRssStreaming:Error! $error $rss");
-        });
+  await _rssFetchByRssMap(foreignRssUrls).then((value) {
+    rsss = value;
+  }).catchError((error) {
+    debugPrint("foreignNewsRssStreaming:Error! $error");
+    NoteProvider().setNote("foreignNewsRssStreaming:Error! $error");
+  });
+
+  return Future<List<RssInformation>>.value(rsss);
+}
+
+//
+// URL MAPを引数にして連続して読み込む汎用内部読み込み機能
+//
+Future<List<RssInformation>> _rssFetchByRssMap(Map<String, String> urls) async {
+  List<RssInformation> rsss = [];
+  for (var rss in urls.keys) {
+    // debugPrint("_rssFetchByRssMap: $rss");
+    await rssStreaming(rss).then((value) {
+      rsss = value;
+    }).whenComplete(() {
+      // debugPrint("_rssFetchByRssMap:Complete! $rss");
+    }).catchError((error) {
+      debugPrint("_rssFetchByRssMap:Error! $error $rss");
+    });
   }
   return Future<List<RssInformation>>.value(rsss);
 }

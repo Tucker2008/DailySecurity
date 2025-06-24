@@ -29,7 +29,8 @@ class WebPageInappviewState extends ConsumerState<WebPageInappview> {
   String sourceUrl = "";
   // Webページローディングのため１度だけ実施するフラグ
   bool _isFirst = true;
-  bool _translate = true;
+  // 最初から翻訳ページを表示する true->false 2025.6.20
+  bool _translate = false;
   // Webページローディング進捗
   double _progress = 0.0;
   // 翻訳ページの生成
@@ -50,13 +51,14 @@ class WebPageInappviewState extends ConsumerState<WebPageInappview> {
       sourceUrl = "$googleTransUrl?sl=en&tl=ja&u=$url";
       // 翻訳ページへの遷移のためのRSSinfomationを作成しておく
       translateRss = rss!.copyWith(link: sourceUrl);
+
       // ガイドコンテナを作成
       // 翻訳ページ表示のために呼ばれいている場合は翻訳ボタンを出さない
       if (url.startsWith(googleTransUrl)) {
         _translate = false;
       }
       _setDividedContainer(
-          "海外のセキュリティサイトを表示します。Google\n翻訳が、うまく動作しない場合があります", _translate);
+          "海外のセキュリティサイトを表示します。Google翻訳が正しく\n動作しない場合があります", _translate);
 
       // BookMarkProviderにWatch定義
       // Map<String, RssInformation> bookmarkMap = ref.watch(bookmarkProvider);
@@ -86,7 +88,9 @@ class WebPageInappviewState extends ConsumerState<WebPageInappview> {
             // Webページ
             Expanded(
               child: InAppWebView(
-                  initialUrlRequest: URLRequest(url: WebUri(url)),
+                  // 最初から翻訳ページを表示する 2025.6.20
+                  // initialUrlRequest: URLRequest(url: WebUri(url)),
+                  initialUrlRequest: URLRequest(url: WebUri(sourceUrl)),
                   onProgressChanged: (_, int progress) {
                     setState(() {
                       _progress = progress / 100;
@@ -144,10 +148,13 @@ class WebPageInappviewState extends ConsumerState<WebPageInappview> {
         ),
         padding: const EdgeInsets.all(8.0),
         margin: const EdgeInsets.all(4.0),
+        // child: Flexible(
         child: Row(
           children: [
             Text(
               msg,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
               // Android版作成：フォントサイズを16->10へ
               style: const TextStyle(
                   color: Colors.white,
@@ -168,9 +175,9 @@ class WebPageInappviewState extends ConsumerState<WebPageInappview> {
                     child: const Text('翻訳'),
                   )
                 : const SizedBox(width: 10),
-            // const SizedBox(width: 10),
           ],
         ),
+        // ),
       );
     }
   }

@@ -148,7 +148,7 @@ Drawer settingsDrawer(BuildContext context) {
             Text(
               settingsVerTitle,
               style: TextStyle(
-                fontSize: fontSize.body1,
+                fontSize: fontSize.body2,
               ),
             ),
             const Spacer(),

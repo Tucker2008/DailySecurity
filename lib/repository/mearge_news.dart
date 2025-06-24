@@ -1,7 +1,9 @@
 import 'package:cyber_interigence/constant/url_constant.dart';
 import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/cache_manager.dart';
+import 'package:cyber_interigence/theme/date_form.dart';
 import 'package:cyber_interigence/util/url_provider.dart';
+// import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 //
@@ -9,30 +11,48 @@ import 'package:intl/intl.dart' show DateFormat;
 // 時系列ソートしてcategoryにソース名を入れる
 // こちらは国内ニュース用
 List<RssInformation>? meargeNews(int max) {
-  return _multiMeargeNews(max, rssUrls);
+  return _multiMeargeNews(max, rssUrls, null);
 }
 
 // こちらは海外ニュース用
 List<RssInformation>? meargeForeignNews(int max) {
-  return _multiMeargeNews(max, foreignRssUrls);
+  return _multiMeargeNews(max, foreignRssUrls, null);
 }
 
 // EntranceScreenトップニュースに表示するニュース(2025.6.18)
 List<RssInformation>? meargeTopNews(int max) {
-  return _multiMeargeNews(max, topNewsRssUrls);
+  return _multiMeargeNews(max, topNewsRssUrls, null);
+}
+
+// インシデントニュース　ココログのColumnとインシデントニュースをマージする(2025.6.18)
+List<RssInformation>? meargeIncidentNews(
+    int max, List<RssInformation> columnList) {
+  return _multiMeargeNews(max, incidentRssUrls, columnList);
 }
 
 // URLのマップに従ってキャッシュからRSSinformation群を取り出す
 // 上限件数とソートを実施する（上限なしなら0とする）
-// 
-List<RssInformation>? _multiMeargeNews(int max, Map<String, String> urlMap) {
+//
+List<RssInformation>? _multiMeargeNews(
+    int max, Map<String, String> urlMap, List<RssInformation>? addList) {
   List<RssInformation> margeList = [];
   List<RssInformation> margedList = [];
   List<RssInformation>? tmpList;
 
   // キャッシュがないなら早すぎるので返す
   if (CacheManager().getRssCacheIsEmpty(urlMap.keys.first)) {
-    return null;
+    // debugPrint("_multiMeargeNews: getRssCacheIsEmpty ${urlMap.keys.first}");
+    // 元リストがあれば、それをそのまま帰す(2025.06.19)
+    if (addList != null) {
+      return addList;
+    } else {
+      return null;
+    }
+  }
+
+  // 元リストが指定されている場合には、あらかじめそれを入れておく(2025.6.19)
+  if (addList != null) {
+    margeList.addAll(addList);
   }
 
   // キャッシュから読み込んでマージする
@@ -52,20 +72,21 @@ List<RssInformation>? _multiMeargeNews(int max, Map<String, String> urlMap) {
         }
       }
       // debugPrint("meargeNews loop: $rss ");
+    } else {
+      // debugPrint("meargeNews: $rss : null");
     }
-    // else {
-    //   debugPrint("meargeNews: $rss : null");
-    // }
   }
 
   // DEBUG
+
   // for (var item in margeList) {
   //   debugPrint("MargeNews: ${item.title}:${item.date}");
   // }
+
   // マージしたリストを時系列にソートする
-  margeList.sort((a, b) => DateFormat('yyyy/MM/dd(E)')
+  margeList.sort((a, b) => DateFormat(dateFormJp, dateFormLocale)
       .parse(b.date)
-      .compareTo(DateFormat('yyyy/MM/dd(E)').parse(a.date)));
+      .compareTo(DateFormat(dateFormJp,dateFormLocale).parse(a.date)));
 
   // ここで件数指定があれば規定数にして返す
   if (max > 0) {
