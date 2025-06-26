@@ -2,8 +2,10 @@
 // Web記事を読み込みEntryStructureへ格納する
 // Providerの定義（関数系をまるごとProvider定義）
 //
+import 'package:cyber_interigence/util/note_provider.dart';
 // import 'package:flutter/material.dart';
 import 'package:cyber_interigence/global.dart';
+import 'package:cyber_interigence/theme/date_form.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
@@ -45,7 +47,7 @@ final webEntoryProvider = FutureProvider.autoDispose.family((ref, url) async {
   List<String> contentLinkHrefTmp = []; // 詳細説明（content_details）
   List<Uri> contentLinksTmp = []; // 参照リンク（content_links）
   try {
-    blogDate = DateFormat("yyyy年MM月dd日", 'ja_JP')
+    blogDate = DateFormat(dateFormWebJp, dateFormLocale)
         .parse(document.getElementsByClassName("date")[0].innerHtml);
     // カテゴリ指定があればそれをカテゴリとする
     if (document.getElementsByClassName("category-ttl").isNotEmpty) {
@@ -85,7 +87,8 @@ final webEntoryProvider = FutureProvider.autoDispose.family((ref, url) async {
     // カテゴリ文字列の内部変換はこのへんでやる
   } catch (e) {
     // 変換に失敗した場合の処理
-
+    // debugPrint("webEntoryProvider:exception: $e");
+    NoteProvider().setNote("webEntoryProvider:exception: $e");
     throw Exception(e);
   }
 

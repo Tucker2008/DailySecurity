@@ -2,6 +2,7 @@ import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/cocolog_stream.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
 import 'package:cyber_interigence/theme/date_form.dart';
+import 'package:cyber_interigence/util/note_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,7 +57,12 @@ class CocologContent extends ConsumerWidget {
     );
     // カラの状態で抜けてきたらBuild()が再度コールされるのでここでトラップする
     if (postStructure.entoryTitle.isEmpty) {
-      return splashScreen(context);
+      // 何等かの障害でエラーの場合はエラー表示
+      if (NoteProvider().isEmpty()) {
+        return splashScreen(context);
+      } else {
+        return splashScreenException(NoteProvider().getNote());
+      }
     }
 
     // 情報源リスト
@@ -127,8 +133,9 @@ class CocologContent extends ConsumerWidget {
                             SizedBox(
                               width: fontSize.caption,
                             ),
+                            // 日付から末尾の秒を取る(2025.6.26)
                             Text(
-                              "${DateFormat(dateFormJp,dateFormLocale).format(postStructure.dateHeader)} 投稿記事",
+                              "${DateFormat(dateFormJpDisp, dateFormLocale).format(postStructure.dateHeader)} 投稿記事",
                               style: TextStyle(
                                 fontSize: fontSize.caption,
                                 decoration: TextDecoration.none,

@@ -7,6 +7,7 @@ import 'package:cyber_interigence/repository/bookmark_manager.dart';
 import 'package:cyber_interigence/repository/launch_url.dart';
 import 'package:cyber_interigence/repository/mearge_news.dart';
 import 'package:cyber_interigence/repository/rss_stream.dart';
+import 'package:cyber_interigence/theme/date_form.dart';
 import 'package:cyber_interigence/util/bookmark_provider.dart';
 import 'package:cyber_interigence/util/color_provider.dart';
 import 'package:cyber_interigence/util/note_provider.dart';
@@ -130,7 +131,10 @@ class ForeignNewsPage extends ConsumerWidget {
                       SizedBox(
                         width: fontSize.caption,
                       ),
-                      Text(informationList[index].date),
+                      // 日付から末尾の秒を取る(2025.6.26)
+                      Text(informationList[index]
+                          .date
+                          .replaceAll(RegExp(regexDelSec), '')),
                       // 空白サイズ縮小 subTitle2->caption  2026.5.20
                       SizedBox(
                         width: fontSize.caption,

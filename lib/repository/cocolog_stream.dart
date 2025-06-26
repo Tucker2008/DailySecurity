@@ -3,6 +3,8 @@
 // Providerの定義（関数系をまるごとProvider定義）
 //
 // import 'package:flutter/material.dart';
+import 'package:cyber_interigence/theme/date_form.dart';
+import 'package:cyber_interigence/util/note_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
@@ -45,7 +47,7 @@ final entryProvider = FutureProvider.autoDispose.family((ref, url) async {
   List<Uri> contentLinksTmp = []; // 参照リンク（content_links）
   try {
     // date-headerフィールドから日付を取得する。parseしてDateTime型にいれる
-    blogDate = DateFormat("y/M/d")
+    blogDate = DateFormat(dateFormCocolog, dateFormLocale)
         .parse(document.getElementsByClassName("date-header")[0].innerHtml);
     // カテゴリ指定があればそれをカテゴリとする
     if (document.getElementsByClassName("content_category").isNotEmpty) {
@@ -82,7 +84,7 @@ final entryProvider = FutureProvider.autoDispose.family((ref, url) async {
     }
   } catch (e) {
     // 変換に失敗した場合の処理
-
+    NoteProvider().setNote("entryProvider:exception: $e");
     throw Exception(e);
   }
 

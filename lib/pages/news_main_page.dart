@@ -133,7 +133,10 @@ class NewsMainPage extends ConsumerWidget {
                       subtitle: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(informationList[index].date),
+                          // 日付から末尾の秒を取る(2025.6.26)
+                          Text(informationList[index]
+                              .date
+                              .replaceAll(RegExp(regexDelSec), '')),
                           SizedBox(
                             width: fontSize.subTitle2,
                           ),

@@ -2,6 +2,7 @@ import 'package:cyber_interigence/model/rss_information.dart';
 import 'package:cyber_interigence/repository/web_stream.dart';
 import 'package:cyber_interigence/theme/appbar_constant.dart';
 import 'package:cyber_interigence/theme/date_form.dart';
+import 'package:cyber_interigence/util/note_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,8 +45,6 @@ class IpaContent extends ConsumerWidget {
     // 引数のURLを強引に渡す
     String targetUrl = rssInfo == null ? UrlProvider().getUrl() : rssInfo.link!;
 
-    debugPrint("IpaContent: $rssInfo"); //DEBUG
-
     // entryを読む機能をentryProvider登録し、その返り値を取得する
     AsyncValue activity = ref.watch(webEntoryProvider(targetUrl));
     activity.when(
@@ -59,7 +58,12 @@ class IpaContent extends ConsumerWidget {
     );
     // カラの状態で抜けてきたらBuild()が再度コールされるのでここでトラップする
     if (postStructure.entoryTitle.isEmpty) {
-      return splashScreen(context);
+      // 何等かの障害でエラーの場合はエラー表示
+      if (NoteProvider().isEmpty()) {
+        return splashScreen(context);
+      } else {
+        return splashScreenException(NoteProvider().getNote());
+      }
     }
 
     // 情報源リスト
@@ -131,7 +135,7 @@ class IpaContent extends ConsumerWidget {
                               width: fontSize.caption,
                             ),
                             Text(
-                              "${DateFormat(dateFormJp,dateFormLocale).format(postStructure.dateHeader)} 投稿記事",
+                              "${DateFormat(dateFormJpDisp, dateFormLocale).format(postStructure.dateHeader)} 投稿記事",
                               style: TextStyle(
                                 fontSize: fontSize.caption,
                                 decoration: TextDecoration.none,
